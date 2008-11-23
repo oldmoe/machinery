@@ -1,6 +1,6 @@
 require 'machinery/extensions'
 require 'machinery/arch'
-require 'machinery/binary'
+require 'machinery/format'
 
 module Machinery
   class Assembler
