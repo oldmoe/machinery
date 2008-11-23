@@ -15,6 +15,16 @@ module Machinery
       sections(prop)
     end
 
+    class << self
+      alias_method :header, :section
+      alias_method :field, :section
+      alias_method :magic, :section
+    end
+
+    def self.endianness(value)
+      @@endianness[self] = value.to_sym
+    end
+
     def initialize(options = {})
       @@sections[self.class].each do |name, default|
         value = options[name] || default
@@ -43,6 +53,7 @@ module Machinery
     end
 
     protected
+      @@endianness = {}
       @@sections = {}
   end
 end
