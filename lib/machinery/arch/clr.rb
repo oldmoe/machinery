@@ -3,11 +3,11 @@ require 'machinery/arch'
 module Machinery::Architecture
 
   ##
-  # Common Intermediate Language (CIL, aka MSIL) opcodes.
+  # Common Language Runtime (CLR, or CIL aka MSIL) opcodes.
   #
   # @see http://www.ecma-international.org/publications/standards/Ecma-335.htm
   # @see http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes_members.aspx
-  class CIL
+  class CLR
     module Opcodes
       NOP                  = 0x00 # 000
       BREAK                = 0x01 # 001
