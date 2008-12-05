@@ -1,2 +1,5 @@
 require 'machinery/version'
+require 'machinery/extensions'
+require 'machinery/arch'
+require 'machinery/format'
 require 'machinery/assembler'
