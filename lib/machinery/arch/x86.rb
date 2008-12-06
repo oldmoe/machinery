@@ -3,12 +3,10 @@ require 'machinery/arch'
 module Machinery::Architecture
 
   ##
-  # The x86 (generic) architecture.
+  # The x86-16 (8086, 80186, 80286) architecture.
   #
-  # @see http://en.wikipedia.org/wiki/Category:X86_architecture
   # @see http://en.wikipedia.org/wiki/X86_architecture
-  # @see http://developer.intel.com/products/processor/manuals/
-  module X86 extend RegisterMachine
+  module X86_16 extend RegisterMachine
     # Instruction pointer and flags (16-bit)
     register :ip,     :bits => 16, :type => :ip,  :title => 'instruction pointer'
     register :flags,  :bits => 16, :type => :flg, :title => 'flags'
@@ -42,7 +40,7 @@ module Machinery::Architecture
   # The x86-32 (IA-32) architecture.
   #
   # @see http://en.wikipedia.org/wiki/IA-32
-  module X86_32 extend RegisterMachine and include X86
+  module X86_32 extend RegisterMachine and include X86_16
     # Instruction pointer and flags (32-bit)
     register :eip,    :bits => 32, :type => :ip,  :title => 'instruction pointer'
     register :eflags, :bits => 32, :type => :flg, :title => 'flags'
@@ -90,6 +88,20 @@ module Machinery::Architecture
     register :r13,    :bits => 64, :type => :reg
     register :r14,    :bits => 64, :type => :reg
     register :r15,    :bits => 64, :type => :reg
+  end
+
+  ##
+  # The x86 architecture.
+  #
+  # @see http://en.wikipedia.org/wiki/Category:X86_architecture
+  # @see http://en.wikipedia.org/wiki/X86_architecture
+  # @see http://developer.intel.com/products/processor/manuals/
+  module X86 extend RegisterMachine and include X86_64
+    ##
+    # x86 instruction set opcodes.
+    module Opcodes
+      NOP                  = 0x90 # 144
+    end
   end
 
 end

@@ -7,7 +7,7 @@ module Machinery class Emulator
   # @see http://en.wikipedia.org/wiki/Intel_8086
   # @see http://en.wikipedia.org/wiki/Intel_8088
   # @see http://en.wikipedia.org/wiki/X86_instruction_listings#Original_8086.2F8088_instructions
-  module X86_8086 include Machinery::Architecture::X86
+  module X86_8086 include Machinery::Architecture::X86_16
     def aaa(*operands)
       raise UnsupportedInstruction # TODO
     end
