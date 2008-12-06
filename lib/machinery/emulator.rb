@@ -1,4 +1,4 @@
-require 'machine/arch'
+require 'machinery/arch'
 
 module Machinery
   ##
@@ -8,8 +8,8 @@ module Machinery
   class Emulator
 
     ##
-    # An invalid instruction was encountered.
-    class InvalidInstruction < NoMethodError; end
+    # An unsupported architecture was specified.
+    class UnsupportedArchitecture < NotImplementedError; end
 
     ##
     # An unsupported instruction was encountered.
@@ -21,5 +21,19 @@ module Machinery
         super instruction.to_s
       end
     end
+
+    ##
+    # An invalid instruction was encountered.
+    class InvalidInstruction < NoMethodError; end
+
+    protected
+
+      def load_instruction_set!(arch, model)
+        begin
+          require "machinery/emulator/#{arch}/#{model}"
+        rescue LoadError
+          raise UnsupportedArchitecture.new("unknown or unsupported #{arch} model '#{model}'")
+        end
+      end
   end
 end
