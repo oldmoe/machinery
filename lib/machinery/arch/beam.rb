@@ -6,7 +6,8 @@ module Machinery::Architecture
   # Erlang virtual machine (BEAM) opcodes.
   #
   # @see http://github.com/mfoemmel/erlang-otp/tree/master/lib/compiler/src/beam_opcodes.erl
-  class BEAM
+  module BEAM extend RegisterMachine
+
     module Opcodes
       LABEL                = 0x01 # 001
       FUNC_INFO            = 0x02 # 002
@@ -169,6 +170,7 @@ module Machinery::Architecture
       end
     end
   end
+
 end
 
 if $0 == __FILE__

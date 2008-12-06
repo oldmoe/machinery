@@ -8,7 +8,8 @@ module Machinery::Architecture
   # @see http://java.sun.com/docs/books/jvms/second_edition/html/Instructions.doc.html
   # @see http://java.sun.com/docs/books/jvms/second_edition/html/Mnemonics.doc.html
   # @see com.sun.tools.javac.jvm.ByteCodes
-  class JVM
+  module JVM extend StackMachine
+
     module Types
       INT    = 0
       LONG   = 1
@@ -228,7 +229,6 @@ module Machinery::Architecture
       IMPDEP1              = 0xfe # 254
       IMPDEP2              = 0xff # 255
     end
-
   end
 
 end

@@ -7,7 +7,8 @@ module Machinery::Architecture
   #
   # @see bin/pyc-opcodes.py
   # @see doc/pyc/opcodes-2.6.txt
-  class PythonVM
+  module PythonVM extend StackMachine
+
     module Opcodes
       STOP_CODE            = 0x00 # 000
       POP_TOP              = 0x01 # 001
@@ -129,4 +130,3 @@ module Machinery::Architecture
   end
   
 end
-  

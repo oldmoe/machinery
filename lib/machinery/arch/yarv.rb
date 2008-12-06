@@ -9,7 +9,8 @@ module Machinery::Architecture
   # @see http://pluskid.lifegoo.com/upload/doc/yarv/yarv_iset.html
   # @see bin/yarv-opcodes.rb
   # @see doc/yarv/opcodes-1.9.1-20438.txt
-  class YARV
+  module YARV extend StackMachine
+
     module Opcodes
       NOP                  = 0x00 # 000
       GETLOCAL             = 0x01 # 001
