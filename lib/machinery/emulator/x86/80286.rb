@@ -35,6 +35,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/LOADALL
     def loadall(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -43,6 +44,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Load_Task_Register
     def ltr(*operands)
       raise UnsupportedInstruction # TODO
     end

@@ -8,18 +8,22 @@ module Machinery class Emulator
   # @see http://en.wikipedia.org/wiki/Intel_8088
   # @see http://en.wikipedia.org/wiki/X86_instruction_listings#Original_8086.2F8088_instructions
   module X86_8086 include Machinery::Architecture::X86_16
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def aaa(*operands)
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def aad(*operands)
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def aam(*operands)
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def aas(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -76,10 +80,12 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def daa(*operands)
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     def das(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -96,6 +102,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/HLT
     def hlt(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -116,6 +123,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/INT_(x86_instruction)
     def int(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -252,6 +260,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/JMP_(x86_instruction)
     def jmp(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -304,6 +313,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/MOV_(x86_instruction)
     def mov(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -324,6 +334,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/NOP
     def nop(*operands)
       raise UnsupportedInstruction # TODO
     end
@@ -460,6 +471,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
+    # @see http://en.wikipedia.org/wiki/TEST_(x86_instruction)
     def test(*operands)
       raise UnsupportedInstruction # TODO
     end
