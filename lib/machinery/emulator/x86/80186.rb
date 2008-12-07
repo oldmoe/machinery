@@ -20,19 +20,19 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def leave(*operands)
+    def leave()
       raise UnsupportedInstruction # TODO
     end
 
-    def outs(*operands)
+    def outs()
       raise UnsupportedInstruction # TODO
     end
 
-    def popa(*operands)
+    def popa()
       raise UnsupportedInstruction # TODO
     end
 
-    def pusha(*operands)
+    def pusha()
       raise UnsupportedInstruction # TODO
     end
   end

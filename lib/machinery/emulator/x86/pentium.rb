@@ -11,15 +11,15 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def rdmsr(*operands)
+    def rdmsr()
       raise UnsupportedInstruction # TODO
     end
 
-    def rdtsc(*operands)
+    def rdtsc()
       raise UnsupportedInstruction # TODO
     end
 
-    def wrmsr(*operands)
+    def wrmsr()
       raise UnsupportedInstruction # TODO
     end
   end

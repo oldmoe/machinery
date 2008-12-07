@@ -31,31 +31,31 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def cdq(*operands)
+    def cdq()
       raise UnsupportedInstruction # TODO
     end
 
-    def cmpsd(*operands)
+    def cmpsd()
       raise UnsupportedInstruction # TODO
     end
 
-    def cwde(*operands)
+    def cwde()
       raise UnsupportedInstruction # TODO
     end
 
-    def insb(*operands)
+    def insb()
       raise UnsupportedInstruction # TODO
     end
 
-    def insw(*operands)
+    def insw()
       raise UnsupportedInstruction # TODO
     end
 
-    def insd(*operands)
+    def insd()
       raise UnsupportedInstruction # TODO
     end
 
-    def iretd(*operands)
+    def iretd()
       raise UnsupportedInstruction # TODO
     end
 
@@ -83,11 +83,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def lodsw(*operands)
-      raise UnsupportedInstruction # TODO
-    end
-
-    def lodsd(*operands)
+    def lodsd()
       raise UnsupportedInstruction # TODO
     end
 
@@ -131,11 +127,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def movsw(*operands)
-      raise UnsupportedInstruction # TODO
-    end
-
-    def movsd(*operands)
+    def movsd()
       raise UnsupportedInstruction # TODO
     end
 
@@ -147,23 +139,23 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def popad(*operands)
+    def popad()
       raise UnsupportedInstruction # TODO
     end
 
-    def popfd(*operands)
+    def popfd()
       raise UnsupportedInstruction # TODO
     end
 
-    def pushad(*operands)
+    def pushad()
       raise UnsupportedInstruction # TODO
     end
 
-    def pushfd(*operands)
+    def pushfd()
       raise UnsupportedInstruction # TODO
     end
 
-    def scasd(*operands)
+    def scasd()
       raise UnsupportedInstruction # TODO
     end
 
@@ -295,7 +287,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def stosx(*operands) # FIXME
+    def stosd()
       raise UnsupportedInstruction # TODO
     end
   end

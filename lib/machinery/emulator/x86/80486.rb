@@ -15,11 +15,11 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def cpuid(*operands)
+    def cpuid()
       raise UnsupportedInstruction # TODO
     end
 
-    def invd(*operands)
+    def invd()
       raise UnsupportedInstruction # TODO
     end
 
@@ -27,7 +27,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def wbinvd(*operands)
+    def wbinvd()
       raise UnsupportedInstruction # TODO
     end
 

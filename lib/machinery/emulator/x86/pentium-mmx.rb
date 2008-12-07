@@ -9,7 +9,7 @@ module Machinery class Emulator
   # @see http://en.wikipedia.org/wiki/X86_instruction_listings#Added_with_Pentium_MMX
   # @see http://en.wikipedia.org/wiki/X86_instruction_listings#MMX_instructions
   module X86_PentiumMMX include X86_Pentium
-    def emms(*operands)
+    def emms()
       raise UnsupportedInstruction # TODO
     end
 
@@ -197,7 +197,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def rdpmc(*operands)
+    def rdpmc()
       raise UnsupportedInstruction # TODO
     end
   end

@@ -11,7 +11,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def clts(*operands)
+    def clts()
       raise UnsupportedInstruction # TODO
     end
 
@@ -36,7 +36,7 @@ module Machinery class Emulator
     end
 
     # @see http://en.wikipedia.org/wiki/LOADALL
-    def loadall(*operands)
+    def loadall()
       raise UnsupportedInstruction # TODO
     end
 

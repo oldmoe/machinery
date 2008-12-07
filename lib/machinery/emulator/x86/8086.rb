@@ -9,22 +9,22 @@ module Machinery class Emulator
   # @see http://en.wikipedia.org/wiki/X86_instruction_listings#Original_8086.2F8088_instructions
   module X86_8086 include Machinery::Architecture::X86_16
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def aaa(*operands)
+    def aaa()
       raise UnsupportedInstruction # TODO
     end
 
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def aad(*operands)
+    def aad(imm = nil)
       raise UnsupportedInstruction # TODO
     end
 
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def aam(*operands)
+    def aam(imm = nil)
       raise UnsupportedInstruction # TODO
     end
 
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def aas(*operands)
+    def aas()
       raise UnsupportedInstruction # TODO
     end
 
@@ -44,23 +44,23 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def cbw(*operands)
+    def cbw()
       raise UnsupportedInstruction # TODO
     end
 
-    def clc(*operands)
+    def clc()
       raise UnsupportedInstruction # TODO
     end
 
-    def cld(*operands)
+    def cld()
       raise UnsupportedInstruction # TODO
     end
 
-    def cli(*operands)
+    def cli()
       raise UnsupportedInstruction # TODO
     end
 
-    def cmc(*operands)
+    def cmc()
       raise UnsupportedInstruction # TODO
     end
 
@@ -68,25 +68,25 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def cmpsb(*operands)
+    def cmpsb()
       raise UnsupportedInstruction # TODO
     end
 
-    def cmpsw(*operands)
+    def cmpsw()
       raise UnsupportedInstruction # TODO
     end
 
-    def cwd(*operands)
-      raise UnsupportedInstruction # TODO
-    end
-
-    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def daa(*operands)
+    def cwd()
       raise UnsupportedInstruction # TODO
     end
 
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
-    def das(*operands)
+    def daa()
+      raise UnsupportedInstruction # TODO
+    end
+
+    # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
+    def das()
       raise UnsupportedInstruction # TODO
     end
 
@@ -103,7 +103,7 @@ module Machinery class Emulator
     end
 
     # @see http://en.wikipedia.org/wiki/HLT
-    def hlt(*operands)
+    def hlt()
       raise UnsupportedInstruction # TODO
     end
 
@@ -128,11 +128,11 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def into(*operands)
+    def into()
       raise UnsupportedInstruction # TODO
     end
 
-    def iret(*operands)
+    def iret()
       raise UnsupportedInstruction # TODO
     end
 
@@ -265,7 +265,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def lahf(*operands)
+    def lahf()
       raise UnsupportedInstruction # TODO
     end
 
@@ -285,11 +285,11 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def lodsb(*operands)
+    def lodsb()
       raise UnsupportedInstruction # TODO
     end
 
-    def lodsw(*operands)
+    def lodsw()
       raise UnsupportedInstruction # TODO
     end
 
@@ -318,11 +318,11 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def movsb(*operands)
+    def movsb()
       raise UnsupportedInstruction # TODO
     end
 
-    def movsw(*operands)
+    def movsw()
       raise UnsupportedInstruction # TODO
     end
 
@@ -335,7 +335,7 @@ module Machinery class Emulator
     end
 
     # @see http://en.wikipedia.org/wiki/NOP
-    def nop(*operands)
+    def nop()
       raise UnsupportedInstruction # TODO
     end
 
@@ -355,7 +355,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def popf(*operands)
+    def popf()
       raise UnsupportedInstruction # TODO
     end
 
@@ -363,7 +363,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def pushf(*operands)
+    def pushf()
       raise UnsupportedInstruction # TODO
     end
 
@@ -395,15 +395,15 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def ret(*operands)
+    def ret(imm16 = nil)
+      retn(imm16)
+    end
+
+    def retn(imm16 = nil)
       raise UnsupportedInstruction # TODO
     end
 
-    def retn(*operands)
-      raise UnsupportedInstruction # TODO
-    end
-
-    def retf(*operands)
+    def retf(imm16 = nil)
       raise UnsupportedInstruction # TODO
     end
 
@@ -415,7 +415,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def sahf(*operands)
+    def sahf()
       raise UnsupportedInstruction # TODO
     end
 
@@ -431,11 +431,11 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def scasb(*operands)
+    def scasb()
       raise UnsupportedInstruction # TODO
     end
 
-    def scasw(*operands)
+    def scasw()
       raise UnsupportedInstruction # TODO
     end
 
@@ -447,23 +447,23 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def stc(*operands)
+    def stc()
       raise UnsupportedInstruction # TODO
     end
 
-    def std(*operands)
+    def std()
       raise UnsupportedInstruction # TODO
     end
 
-    def sti(*operands)
+    def sti()
       raise UnsupportedInstruction # TODO
     end
 
-    def stosb(*operands)
+    def stosb()
       raise UnsupportedInstruction # TODO
     end
 
-    def stosw(*operands)
+    def stosw()
       raise UnsupportedInstruction # TODO
     end
 
@@ -476,7 +476,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def wait(*operands)
+    def wait()
       raise UnsupportedInstruction # TODO
     end
 

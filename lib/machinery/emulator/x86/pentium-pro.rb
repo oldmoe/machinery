@@ -135,7 +135,7 @@ module Machinery class Emulator
       raise UnsupportedInstruction # TODO
     end
 
-    def rdpmc(*operands)
+    def rdpmc()
       raise UnsupportedInstruction # TODO
     end
 
