@@ -139,6 +139,10 @@ module Machinery module Architecture
         end
       end
 
+      def self.[](*args)
+        self # TODO
+      end
+
       def self.effect(diagram = {})
         # TODO
       end
@@ -146,123 +150,703 @@ module Machinery module Architecture
 
     ##
     # The Python virtual machine instruction set.
+    #
+    # @see http://docs.python.org/lib/bytecodes.html
+    # @see http://docs.python.org/library/dis.html#bytecodes
     module Instructions
-      class STOP_CODE < Instruction; end
-      class POP_TOP < Instruction; end
-      class ROT_TWO < Instruction; end
-      class ROT_THREE < Instruction; end
-      class DUP_TOP < Instruction; end
-      class ROT_FOUR < Instruction; end
-      class NOP < Instruction; end
-      class UNARY_POSITIVE < Instruction; end
-      class UNARY_NEGATIVE < Instruction; end
-      class UNARY_NOT < Instruction; end
-      class UNARY_CONVERT < Instruction; end
-      class UNARY_INVERT < Instruction; end
-      class LIST_APPEND < Instruction; end
-      class BINARY_POWER < Instruction; end
-      class BINARY_MULTIPLY < Instruction; end
-      class BINARY_DIVIDE < Instruction; end
-      class BINARY_MODULO < Instruction; end
-      class BINARY_ADD < Instruction; end
-      class BINARY_SUBTRACT < Instruction; end
-      class BINARY_SUBSCR < Instruction; end
-      class BINARY_FLOOR_DIVIDE < Instruction; end
-      class BINARY_TRUE_DIVIDE < Instruction; end
-      class INPLACE_FLOOR_DIVIDE < Instruction; end
-      class INPLACE_TRUE_DIVIDE < Instruction; end
-      class SLICE < Instruction; end
-      class SLICE_0 < Instruction; end
-      class SLICE_1 < Instruction; end
-      class SLICE_2 < Instruction; end
-      class SLICE_3 < Instruction; end
-      class STORE_SLICE < Instruction; end
-      class STORE_SLICE_0 < Instruction; end
-      class STORE_SLICE_1 < Instruction; end
-      class STORE_SLICE_2 < Instruction; end
-      class STORE_SLICE_3 < Instruction; end
-      class DELETE_SLICE < Instruction; end
-      class DELETE_SLICE_0 < Instruction; end
-      class DELETE_SLICE_1 < Instruction; end
-      class DELETE_SLICE_2 < Instruction; end
-      class DELETE_SLICE_3 < Instruction; end
-      class STORE_MAP < Instruction; end
-      class INPLACE_ADD < Instruction; end
-      class INPLACE_SUBTRACT < Instruction; end
-      class INPLACE_MULTIPLY < Instruction; end
-      class INPLACE_DIVIDE < Instruction; end
-      class INPLACE_MODULO < Instruction; end
-      class STORE_SUBSCR < Instruction; end
-      class DELETE_SUBSCR < Instruction; end
-      class BINARY_LSHIFT < Instruction; end
-      class BINARY_RSHIFT < Instruction; end
-      class BINARY_AND < Instruction; end
-      class BINARY_XOR < Instruction; end
-      class BINARY_OR < Instruction; end
-      class INPLACE_POWER < Instruction; end
-      class GET_ITER < Instruction; end
-      class PRINT_EXPR < Instruction; end
-      class PRINT_ITEM < Instruction; end
-      class PRINT_NEWLINE < Instruction; end
-      class PRINT_ITEM_TO < Instruction; end
-      class PRINT_NEWLINE_TO < Instruction; end
-      class INPLACE_LSHIFT < Instruction; end
-      class INPLACE_RSHIFT < Instruction; end
-      class INPLACE_AND < Instruction; end
-      class INPLACE_XOR < Instruction; end
-      class INPLACE_OR < Instruction; end
-      class BREAK_LOOP < Instruction; end
-      class WITH_CLEANUP < Instruction; end
-      class LOAD_LOCALS < Instruction; end
-      class RETURN_VALUE < Instruction; end
-      class IMPORT_STAR < Instruction; end
-      class EXEC_STMT < Instruction; end
-      class YIELD_VALUE < Instruction; end
-      class POP_BLOCK < Instruction; end
-      class END_FINALLY < Instruction; end
-      class BUILD_CLASS < Instruction; end
-      class STORE_NAME < Instruction; end
-      class DELETE_NAME < Instruction; end
-      class UNPACK_SEQUENCE < Instruction; end
-      class FOR_ITER < Instruction; end
-      class STORE_ATTR < Instruction; end
-      class DELETE_ATTR < Instruction; end
-      class STORE_GLOBAL < Instruction; end
-      class DELETE_GLOBAL < Instruction; end
-      class DUP_TOPX < Instruction; end
-      class LOAD_CONST < Instruction; end
-      class LOAD_NAME < Instruction; end
-      class BUILD_TUPLE < Instruction; end
-      class BUILD_LIST < Instruction; end
-      class BUILD_MAP < Instruction; end
-      class LOAD_ATTR < Instruction; end
-      class COMPARE_OP < Instruction; end
-      class IMPORT_NAME < Instruction; end
-      class IMPORT_FROM < Instruction; end
-      class JUMP_FORWARD < Instruction; end
-      class JUMP_IF_FALSE < Instruction; end
-      class JUMP_IF_TRUE < Instruction; end
-      class JUMP_ABSOLUTE < Instruction; end
-      class LOAD_GLOBAL < Instruction; end
-      class CONTINUE_LOOP < Instruction; end
-      class SETUP_LOOP < Instruction; end
-      class SETUP_EXCEPT < Instruction; end
-      class SETUP_FINALLY < Instruction; end
-      class LOAD_FAST < Instruction; end
-      class STORE_FAST < Instruction; end
-      class DELETE_FAST < Instruction; end
-      class RAISE_VARARGS < Instruction; end
-      class CALL_FUNCTION < Instruction; end
-      class MAKE_FUNCTION < Instruction; end
-      class BUILD_SLICE < Instruction; end
-      class MAKE_CLOSURE < Instruction; end
-      class LOAD_CLOSURE < Instruction; end
-      class LOAD_DEREF < Instruction; end
-      class STORE_DEREF < Instruction; end
-      class CALL_FUNCTION_VAR < Instruction; end
-      class CALL_FUNCTION_KW < Instruction; end
-      class CALL_FUNCTION_VAR_KW < Instruction; end
-      class EXTENDED_ARG < Instruction; end
+      protected
+        def self.Instruction(*args) Instruction[*args] end
+
+      ##
+      # Indicates end-of-code to the compiler; not used by the interpreter.
+      class STOP_CODE < Instruction()
+        emulate do raise InvalidInstruction end
+      end
+
+      ##
+      # Removes the top-of-stack (TOS) item.
+      class POP_TOP < Instruction()
+        effect  [:a] => []
+        emulate do stack.pop end
+      end
+
+      ##
+      # Swaps the two top-most stack items.
+      class ROT_TWO < Instruction()
+        effect  [:a, :b] => [:b, :a]
+      end
+
+      ##
+      # Lifts second and third stack item one position up, moves top down to position three.
+      class ROT_THREE < Instruction()
+        effect  [:a, :b, :c] => [:c, :a, :b]
+      end
+
+      ##
+      # Duplicates the reference on top of the stack.
+      class DUP_TOP < Instruction()
+        effect  [:a] => [:a, :a]
+      end
+
+      ##
+      # Lifts second, third and fourth stack item one position up, moves top down to position four.
+      class ROT_FOUR < Instruction()
+        effect  [:a, :b, :c, :d] => [:d, :a, :b, :c]
+      end
+
+      ##
+      # Do nothing code. Used as a placeholder by the bytecode optimizer.
+      class NOP < Instruction()
+        emulate do Thread.pass end
+      end
+
+      ##
+      # Implements <tt>TOS = +TOS</tt>.
+      class UNARY_POSITIVE < Instruction()
+        effect  [:a] => [:b]
+      end
+
+      ##
+      # Implements <tt>TOS = -TOS</tt>.
+      class UNARY_NEGATIVE < Instruction()
+        effect  [:a] => [:b]
+      end
+
+      ##
+      # Implements <tt>TOS = not TOS</tt>.
+      class UNARY_NOT < Instruction()
+        effect  [:a] => [:b]
+      end
+
+      ##
+      # Implements <tt>TOS = `TOS`</tt>.
+      class UNARY_CONVERT < Instruction()
+        effect  [:a] => [:b]
+      end
+
+      ##
+      # Implements <tt>TOS = ~TOS</tt>.
+      class UNARY_INVERT < Instruction()
+        effect  [:a] => [:b]
+      end
+
+      ##
+      # Calls <tt>list.append(TOS1, TOS)</tt>. Used to implement list comprehensions.
+      class LIST_APPEND < Instruction()
+        effect  [:a, :b] => [] # FIXME
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 ** TOS</tt>.
+      class BINARY_POWER < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 * TOS</tt>.
+      class BINARY_MULTIPLY < Instruction()
+        effect  [:a, :b] => :*.to_proc
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
+      class BINARY_DIVIDE < Instruction()
+        effect  [:a, :b] => :"/".to_proc
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 % TOS</tt>.
+      class BINARY_MODULO < Instruction()
+        effect  [:a, :b] => :"%".to_proc
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 + TOS</tt>.
+      class BINARY_ADD < Instruction()
+        effect  [:a, :b] => :+.to_proc
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 - TOS</tt>.
+      class BINARY_SUBTRACT < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1[TOS]</tt>.
+      class BINARY_SUBSCR < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 // TOS</tt>.
+      class BINARY_FLOOR_DIVIDE < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
+      class BINARY_TRUE_DIVIDE < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 // TOS</tt>.
+      class INPLACE_FLOOR_DIVIDE < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
+      class INPLACE_TRUE_DIVIDE < Instruction()
+        effect  [:a, :b] => [:c]
+      end
+
+      ##
+      # Alias for <tt>SLICE+0</tt>.
+      class SLICE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS[:]</tt>.
+      class SLICE_0 < SLICE; end
+
+      ##
+      # Implements <tt>TOS = TOS1[TOS:]</tt>.
+      class SLICE_1 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1[:TOS]</tt>.
+      class SLICE_2 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS2[TOS1:TOS]</tt>.
+      class SLICE_3 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Alias for <tt>STORE_SLICE+0</tt>.
+      class STORE_SLICE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS[:] = TOS1</tt>.
+      class STORE_SLICE_0 < STORE_SLICE; end
+
+      ##
+      # Implements <tt>TOS1[TOS:] = TOS2</tt>.
+      class STORE_SLICE_1 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS1[:TOS] = TOS2</tt>.
+      class STORE_SLICE_2 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS2[TOS1:TOS] = TOS3</tt>.
+      class STORE_SLICE_3 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Alias for <tt>DELETE_SLICE+0</tt>.
+      class DELETE_SLICE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del TOS[:]</tt>.
+      class DELETE_SLICE_0 < DELETE_SLICE; end
+
+      ##
+      # Implements <tt>del TOS1[TOS:]</tt>.
+      class DELETE_SLICE_1 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del TOS1[:TOS]</tt>.
+      class DELETE_SLICE_2 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del TOS2[TOS1:TOS]</tt>.
+      class DELETE_SLICE_3 < Instruction()
+        # TODO
+      end
+
+      ##
+      # Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.
+      class STORE_MAP < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 + TOS</tt>.
+      class INPLACE_ADD < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 - TOS</tt>.
+      class INPLACE_SUBTRACT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 * TOS</tt>.
+      class INPLACE_MULTIPLY < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
+      class INPLACE_DIVIDE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 % TOS.</tt>
+      class INPLACE_MODULO < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS1[TOS] = TOS2</tt>.
+      class STORE_SUBSCR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del TOS1[TOS]</tt>.
+      class DELETE_SUBSCR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 << TOS</tt>.
+      class BINARY_LSHIFT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 >> TOS</tt>.
+      class BINARY_RSHIFT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 & TOS</tt>.
+      class BINARY_AND < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 ^ TOS</tt>.
+      class BINARY_XOR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = TOS1 | TOS</tt>.
+      class BINARY_OR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 ** TOS</tt>.
+      class INPLACE_POWER < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS = iter(TOS)</tt>.
+      class GET_ITER < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements the expression statement for the interactive mode. TOS is removed from the stack and printed. In non-interactive mode, an expression statement is terminated with <tt>POP_STACK</tt>.
+      class PRINT_EXPR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Prints TOS to the file-like object bound to <tt>sys.stdout</tt>. There is one such instruction for each item in the <tt>print</tt> statement.
+      class PRINT_ITEM < Instruction()
+        # TODO
+      end
+
+      ##
+      # Prints a new line on <tt>sys.stdout</tt>. This is generated as the last operation of a <tt>print</tt> statement, unless the statement ends with a comma.
+      class PRINT_NEWLINE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Like <tt>PRINT_ITEM</tt>, but prints the item second from TOS to the file-like object at TOS. This is used by the extended <tt>print</tt> statement.
+      class PRINT_ITEM_TO < Instruction()
+        # TODO
+      end
+
+      ##
+      # Like <tt>PRINT_NEWLINE</tt>, but prints the new line on the file-like object on the TOS. This is used by the extended <tt>print</tt> statement.
+      class PRINT_NEWLINE_TO < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 << TOS</tt>.
+      class INPLACE_LSHIFT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 >> TOS</tt>.
+      class INPLACE_RSHIFT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 & TOS</tt>.
+      class INPLACE_AND < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 ^ TOS</tt>.
+      class INPLACE_XOR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements in-place <tt>TOS = TOS1 | TOS</tt>.
+      class INPLACE_OR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Terminates a loop due to a <tt>break</tt> statement.
+      class BREAK_LOOP < Instruction()
+        # TODO
+      end
+
+      ##
+      # Cleans up the stack when a <tt>with</tt> statement block exits. On top of the stack are 1-3 values indicating how/why the <tt>finally</tt> clause was entered.
+      class WITH_CLEANUP < Instruction()
+        # TODO
+      end
+
+      ##
+      # Pushes a reference to the locals of the current scope on the stack. This is used in the code for a class definition: after the class body is evaluated, the locals are passed to the class definition.
+      class LOAD_LOCALS < Instruction()
+        # TODO
+      end
+
+      ##
+      # Returns with TOS to the caller of the function.
+      class RETURN_VALUE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Loads all symbols not starting with <tt>'_'</tt> directly from the module TOS to the local namespace. The module is popped after loading all names. This opcode implements <tt>from module import *</tt>.
+      class IMPORT_STAR < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>exec TOS2,TOS1,TOS</tt>. The compiler fills missing optional parameters with <tt>None</tt>.
+      class EXEC_STMT < Instruction()
+        # TODO
+      end
+
+      ##
+      # Pops TOS and yields it from a generator.
+      class YIELD_VALUE < Instruction()
+        # TODO
+      end
+
+      ##
+      # Removes one block from the block stack. Per frame, there is a stack of blocks, denoting nested loops, <tt>try</tt> statements, and such.
+      class POP_BLOCK < Instruction()
+        # TODO
+      end
+
+      ##
+      # Terminates a <tt>finally</tt> clause. The interpreter recalls whether the exception has to be re-raised, or whether the function returns, and continues with the outer-next block.
+      class END_FINALLY < Instruction()
+        # TODO
+      end
+
+      ##
+      # Creates a new class object. TOS is the methods dictionary, TOS1 the tuple of the names of the base classes, and TOS2 the class name.
+      class BUILD_CLASS < Instruction()
+        # TODO
+      end
+
+      ##
+      # Implements <tt>name = TOS</tt>. <em>namei</em> is the index of <em>name</em> in the attribute <tt>co_names</tt> of the code object. The compiler tries to use <tt>STORE_FAST</tt> or <tt>STORE_GLOBAL</tt> if possible.
+      class STORE_NAME < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del name</tt>, where <em>namei</em> is the index into <tt>co_names</tt> attribute of the code object.
+      class DELETE_NAME < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Unpacks TOS into <em>count</em> individual values, which are put onto the stack right-to-left.
+      class UNPACK_SEQUENCE < Instruction(:count)
+        # TODO
+      end
+
+      ##
+      # TOS is an iterator. Call its <tt>next()</tt> method. If this yields a new value, push it on the stack (leaving the iterator below it). If the iterator indicates it is exhausted TOS is popped, and the bytecode counter is incremented by <em>delta</em>.
+      class FOR_ITER < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # Implements <tt>TOS.name = TOS1</tt>, where <em>namei</em> is the index of <em>name</em> in <tt>co_names</tt>.
+      class STORE_ATTR < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Implements <tt>del TOS.name</tt>, using <em>namei</em> as index into <tt>co_names</tt>.
+      class DELETE_ATTR < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Works as <tt>STORE_NAME</tt>, but stores the name as a global.
+      class STORE_GLOBAL < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Works as <tt>DELETE_NAME</tt>, but deletes a global name.
+      class DELETE_GLOBAL < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Duplicate <em>count</em> items, keeping them in the same order. Due to implementation limits, <em>count</em> should be between 1 and 5 inclusive.
+      class DUP_TOPX < Instruction(:count)
+        # TODO
+      end
+
+      ##
+      # Pushes <tt>co_consts[consti]</tt> onto the stack.
+      class LOAD_CONST < Instruction(:consti)
+        # TODO
+      end
+
+      ##
+      # Pushes the value associated with <tt>co_names[namei]</tt> onto the stack.
+      class LOAD_NAME < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Creates a tuple consuming <em>count</em> items from the stack, and pushes the resulting tuple onto the stack.
+      class BUILD_TUPLE < Instruction(:count)
+        # TODO
+      end
+
+      ##
+      # Works as <tt>BUILD_TUPLE</tt>, but creates a list.
+      class BUILD_LIST < Instruction(:count)
+        # TODO
+      end
+
+      ##
+      # Pushes a new dictionary object onto the stack. The dictionary is pre-sized to hold <em>count</em> entries.
+      class BUILD_MAP < Instruction(:count)
+        # TODO
+      end
+
+      ##
+      # Replaces TOS with <tt>getattr(TOS, co_names[namei])</tt>.
+      class LOAD_ATTR < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Performs a Boolean operation. The operation name can be found in <tt>cmp_op[opname]</tt>.
+      class COMPARE_OP < Instruction(:opname)
+        # TODO
+      end
+
+      ##
+      # Imports the module <tt>co_names[namei]</tt>. TOS and TOS1 are popped and provide the <em>fromlist</em> and <em>level</em> arguments of <tt>__import__()</tt>. The module object is pushed onto the stack. The current namespace is not affected: for a proper <tt>import</tt> statement, a subsequent <tt>STORE_FAST</tt> instruction modifies the namespace.
+      class IMPORT_NAME < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Loads the attribute <tt>co_names[namei]</tt> from the module found in TOS. The resulting object is pushed onto the stack, to be subsequently stored by a <tt>STORE_FAST</tt> instruction.
+      class IMPORT_FROM < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Increments bytecode counter by <em>delta</em>.
+      class JUMP_FORWARD < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # If TOS is false, increment the bytecode counter by <em>delta</em>. TOS is not changed.
+      class JUMP_IF_FALSE < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # If TOS is true, increment the bytecode counter by <em>delta</em>. TOS is left on the stack.
+      class JUMP_IF_TRUE < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # Set bytecode counter to <em>target</em>.
+      class JUMP_ABSOLUTE < Instruction(:target)
+        # TODO
+      end
+
+      ##
+      # Loads the global named <tt>co_names[namei]</tt> onto the stack.
+      class LOAD_GLOBAL < Instruction(:namei)
+        # TODO
+      end
+
+      ##
+      # Continues a loop due to a <tt>continue</tt> statement. <em>target</em> is the address to jump to (which should be a <tt>FOR_ITER</tt> instruction).
+      class CONTINUE_LOOP < Instruction(:target)
+        # TODO
+      end
+
+      ##
+      # Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of <em>delta</em> bytes.
+      class SETUP_LOOP < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # Pushes a try block from a <tt>try-except</tt> clause onto the block stack. <em>delta</em> points to the first <tt>except</tt> block.
+      class SETUP_EXCEPT < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # Pushes a try block from a <tt>try-except</tt> clause onto the block stack. <em>delta</em> points to the <tt>finally</tt> block.
+      class SETUP_FINALLY < Instruction(:delta)
+        # TODO
+      end
+
+      ##
+      # Pushes a reference to the local <tt>co_varnames[var_num]</tt> onto the stack.
+      class LOAD_FAST < Instruction(:var_num)
+        # TODO
+      end
+
+      ##
+      # Stores TOS into the local <tt>co_varnames[var_num]</tt>.
+      class STORE_FAST < Instruction(:var_num)
+        # TODO
+      end
+
+      ##
+      # Deletes local <tt>co_varnames[var_num]</tt>.
+      class DELETE_FAST < Instruction(:var_num)
+        # TODO
+      end
+
+      ##
+      # Raises an exception. <em>argc</em> indicates the number of parameters to the <tt>raise</tt> statement, ranging from 0 to 3. The handler will find the traceback as TOS2, the parameter as TOS1, and the exception as TOS.
+      class RAISE_VARARGS < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Calls a function. The low byte of <em>argc</em> indicates the number of positional parameters, the high byte the number of keyword parameters. On the stack, the opcode finds the keyword parameters first. For each keyword argument, the value is on top of the key. Below the keyword parameters, the positional parameters are on the stack, with the right-most parameter on top. Below the parameters, the function object to call is on the stack. Pops all function arguments, and the function itself off the stack, and pushes the return value.
+      class CALL_FUNCTION < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Pushes a new function object on the stack. TOS is the code associated with the function. The function object is defined to have <em>argc</em> default parameters, which are found below TOS.
+      class MAKE_FUNCTION < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Pushes a slice object on the stack. <em>argc</em> must be 2 or 3. If it is 2, <tt>slice(TOS1, TOS)</tt> is pushed; if it is 3, <tt>slice(TOS2, TOS1, TOS)</tt> is pushed. See the <tt>slice()</tt> built-in function for more information.
+      class BUILD_SLICE < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Creates a new function object, sets its <em>func_closure</em> slot, and pushes it on the stack. TOS is the code associated with the function, TOS1 the tuple containing cells for the closure's free variables. The function also has <em>argc</em> default parameters, which are found below the cells.
+      class MAKE_CLOSURE < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Pushes a reference to the cell contained in slot <em>i</em> of the cell and free variable storage. The name of the variable is <tt>co_cellvars[i]</tt> if <em>i</em> is less than the length of <em>co_cellvars</em>. Otherwise it is <tt>co_freevars[i - len(co_cellvars)]</tt>.
+      class LOAD_CLOSURE < Instruction(:i)
+        # TODO
+      end
+
+      ##
+      # Loads the cell contained in slot <em>i</em> of the cell and free variable storage. Pushes a reference to the object the cell contains on the stack.
+      class LOAD_DEREF < Instruction(:i)
+        # TODO
+      end
+
+      ##
+      # Stores TOS into the cell contained in slot <em>i</em> of the cell and free variable storage.
+      class STORE_DEREF < Instruction(:i)
+        # TODO
+      end
+
+      ##
+      # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the variable argument list, followed by keyword and positional arguments.
+      class CALL_FUNCTION_VAR < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the keyword arguments dictionary, followed by explicit keyword and positional arguments.
+      class CALL_FUNCTION_KW < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the keyword arguments dictionary, followed by the variable-arguments tuple, followed by explicit keyword and positional arguments.
+      class CALL_FUNCTION_VAR_KW < Instruction(:argc)
+        # TODO
+      end
+
+      ##
+      # Prefixes any opcode which has an argument too big to fit into the default two bytes. <em>ext</em> holds two additional bytes which, taken together with the subsequent opcode's argument, comprise a four-byte argument, <em>ext</em> being the two most-significant bytes.
+      class EXTENDED_ARG < Instruction(:ext)
+        # TODO
+      end
     end
   end
 
