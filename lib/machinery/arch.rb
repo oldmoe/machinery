@@ -18,6 +18,22 @@ module Machinery
         end
       end
 
+      def self.encode(*params, &block)
+        # TODO
+      end
+
+      def self.decode(*params, &block)
+        # TODO
+      end
+
+      def self.cycles(*params, &block)
+        # TODO
+      end
+
+      def self.emulate(*params, &block)
+        # TODO
+      end
+
       def initialize(opcode, *operands)
         @opcode, @operands = opcode, operands
       end
@@ -61,6 +77,12 @@ module Machinery
       def inspect
         "#<#{self.class}(#{to_s})>"
       end
+    end
+
+    ##
+    # A machine's RAM or ROM.
+    class Memory
+      # TODO
     end
 
     ##
