@@ -164,6 +164,7 @@ module Machinery::Architecture
       INSD                 = 0x6D     # [386,o32]
       INT3                 = 0xCC     # [x86]
       INTO                 = 0xCE     # [x86]
+      INVD                 = 0x0F08   # [486]
       IRET                 = 0xCF     # [x86]
       IRETW                = 0xCF     # [x86,o16]
       IRETD                = 0xCF     # [386,o32]
@@ -209,6 +210,7 @@ module Machinery::Architecture
       STOSW                = 0xAB     # [x86,o16]
       STOSD                = 0xAB     # [386,o32]
       WAIT                 = 0x9B     # [x86]
+      WBINVD               = 0x0F09   # [486]
       XLATB                = 0xD7     # [x86]
     end
   end
