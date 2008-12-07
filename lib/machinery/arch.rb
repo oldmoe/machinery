@@ -12,6 +12,12 @@ module Machinery
     class Instruction
       attr_accessor :opcode, :operands
 
+      def self.opcode(opcode)
+        define_method(:initialize) do |*operands|
+          @opcode, @operands = opcode, operands
+        end
+      end
+
       def initialize(opcode, *operands)
         @opcode, @operands = opcode, operands
       end
