@@ -203,103 +203,103 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS = +TOS</tt>.
       class UNARY_POSITIVE < Instruction()
-        effect  [:a] => [:b]
+        effect  [:a] => [:b] # TODO
       end
 
       ##
       # Implements <tt>TOS = -TOS</tt>.
       class UNARY_NEGATIVE < Instruction()
-        effect  [:a] => [:b]
+        effect  [:a] => [:b] # TODO
       end
 
       ##
       # Implements <tt>TOS = not TOS</tt>.
       class UNARY_NOT < Instruction()
-        effect  [:a] => [:b]
+        effect  [:a] => [:b] # TODO
       end
 
       ##
       # Implements <tt>TOS = `TOS`</tt>.
       class UNARY_CONVERT < Instruction()
-        effect  [:a] => [:b]
+        effect  [:a] => [:b] # TODO
       end
 
       ##
       # Implements <tt>TOS = ~TOS</tt>.
       class UNARY_INVERT < Instruction()
-        effect  [:a] => [:b]
+        effect  [:a] => [:b] # TODO
       end
 
       ##
       # Calls <tt>list.append(TOS1, TOS)</tt>. Used to implement list comprehensions.
       class LIST_APPEND < Instruction()
-        effect  [:a, :b] => [] # FIXME
+        effect  [:a, :b] => [] # TODO
       end
 
       ##
       # Implements <tt>TOS = TOS1 ** TOS</tt>.
       class BINARY_POWER < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:"**".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 * TOS</tt>.
       class BINARY_MULTIPLY < Instruction()
-        effect  [:a, :b] => :*.to_proc
+        effect  [:a, :b] => [:*.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
       class BINARY_DIVIDE < Instruction()
-        effect  [:a, :b] => :"/".to_proc
+        effect  [:a, :b] => [:"/".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 % TOS</tt>.
       class BINARY_MODULO < Instruction()
-        effect  [:a, :b] => :"%".to_proc
+        effect  [:a, :b] => [:"%".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 + TOS</tt>.
       class BINARY_ADD < Instruction()
-        effect  [:a, :b] => :+.to_proc
+        effect  [:a, :b] => [:+.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 - TOS</tt>.
       class BINARY_SUBTRACT < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:"-".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1[TOS]</tt>.
       class BINARY_SUBSCR < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:[].to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 // TOS</tt>.
       class BINARY_FLOOR_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:c] # TODO
       end
 
       ##
       # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
       class BINARY_TRUE_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:"/".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 // TOS</tt>.
       class INPLACE_FLOOR_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:c] # TODO
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
       class INPLACE_TRUE_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c]
+        effect  [:a, :b] => [:"/".to_proc]
       end
 
       ##
@@ -395,31 +395,31 @@ module Machinery module Architecture
       ##
       # Implements in-place <tt>TOS = TOS1 + TOS</tt>.
       class INPLACE_ADD < Instruction()
-        # TODO
+        effect  [:a, :b] => [:+.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 - TOS</tt>.
       class INPLACE_SUBTRACT < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"-".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 * TOS</tt>.
       class INPLACE_MULTIPLY < Instruction()
-        # TODO
+        effect  [:a, :b] => [:*.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
       class INPLACE_DIVIDE < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"/".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 % TOS.</tt>
       class INPLACE_MODULO < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"%".to_proc]
       end
 
       ##
@@ -437,37 +437,37 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS = TOS1 << TOS</tt>.
       class BINARY_LSHIFT < Instruction()
-        # TODO
+        effect  [:a, :b] => [:<<.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 >> TOS</tt>.
       class BINARY_RSHIFT < Instruction()
-        # TODO
+        effect  [:a, :b] => [:>>.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 & TOS</tt>.
       class BINARY_AND < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"&".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 ^ TOS</tt>.
       class BINARY_XOR < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"^".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 | TOS</tt>.
       class BINARY_OR < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"|".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 ** TOS</tt>.
       class INPLACE_POWER < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"**".to_proc]
       end
 
       ##
@@ -479,19 +479,21 @@ module Machinery module Architecture
       ##
       # Implements the expression statement for the interactive mode. TOS is removed from the stack and printed. In non-interactive mode, an expression statement is terminated with <tt>POP_STACK</tt>.
       class PRINT_EXPR < Instruction()
-        # TODO
+        effect  [:a] => []
+        emulate do puts stack.pop end
       end
 
       ##
       # Prints TOS to the file-like object bound to <tt>sys.stdout</tt>. There is one such instruction for each item in the <tt>print</tt> statement.
       class PRINT_ITEM < Instruction()
+        effect  [:a] => []
         # TODO
       end
 
       ##
       # Prints a new line on <tt>sys.stdout</tt>. This is generated as the last operation of a <tt>print</tt> statement, unless the statement ends with a comma.
       class PRINT_NEWLINE < Instruction()
-        # TODO
+        emulate do puts end
       end
 
       ##
@@ -509,31 +511,31 @@ module Machinery module Architecture
       ##
       # Implements in-place <tt>TOS = TOS1 << TOS</tt>.
       class INPLACE_LSHIFT < Instruction()
-        # TODO
+        effect  [:a, :b] => [:<<.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 >> TOS</tt>.
       class INPLACE_RSHIFT < Instruction()
-        # TODO
+        effect  [:a, :b] => [:>>.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 & TOS</tt>.
       class INPLACE_AND < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"&".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 ^ TOS</tt>.
       class INPLACE_XOR < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"^".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 | TOS</tt>.
       class INPLACE_OR < Instruction()
-        # TODO
+        effect  [:a, :b] => [:"|".to_proc]
       end
 
       ##
@@ -557,6 +559,7 @@ module Machinery module Architecture
       ##
       # Returns with TOS to the caller of the function.
       class RETURN_VALUE < Instruction()
+        effect  [:a] => []
         # TODO
       end
 
@@ -575,6 +578,7 @@ module Machinery module Architecture
       ##
       # Pops TOS and yields it from a generator.
       class YIELD_VALUE < Instruction()
+        effect  [:a] => []
         # TODO
       end
 
