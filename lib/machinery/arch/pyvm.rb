@@ -5,9 +5,10 @@ module Machinery module Architecture
   ##
   # The Python 2.6 virtual machine architecture.
   module PythonVM extend StackMachine
+    stack :stack
 
     ##
-    # The Python virtual machine opcodes.
+    # The Python virtual machine's opcodes.
     #
     # @see bin/pyc-opcodes.py
     # @see doc/pyc/opcodes-2.6.txt
@@ -132,30 +133,24 @@ module Machinery module Architecture
 
     ##
     # A Python virtual machine instruction.
-    class Instruction < Machinery::Architecture::Instruction
+    class Instruction < Architecture::Instruction
+      stack_name :stack
+
       def self.inherited(subclass)
-        if const = Opcodes.const_get(subclass.name.split('::').last)
-          subclass.opcode(const)
+        begin
+          subclass.opcode(Opcodes.const_get(subclass.instruction_name))
+        rescue NameError => e
+          raise NameError.new("missing opcode constant for instruction #{subclass.instruction_name}")
         end
-      end
-
-      def self.[](*args)
-        self # TODO
-      end
-
-      def self.effect(diagram = {})
-        # TODO
       end
     end
 
     ##
-    # The Python virtual machine instruction set.
+    # The Python virtual machine's instruction set.
     #
     # @see http://docs.python.org/lib/bytecodes.html
     # @see http://docs.python.org/library/dis.html#bytecodes
-    module Instructions
-      protected
-        def self.Instruction(*args) Instruction[*args] end
+    module Instructions extend Architecture::InstructionSet(Instruction)
 
       ##
       # Indicates end-of-code to the compiler; not used by the interpreter.
@@ -657,7 +652,9 @@ module Machinery module Architecture
       ##
       # Pushes <tt>co_consts[consti]</tt> onto the stack.
       class LOAD_CONST < Instruction(:consti)
-        # TODO
+        effect  [] => [:a]
+        emulate do |consti| stack.push(codeobject.consts[consti]) end
+        encode  do |const|  emit(opcode, block.const(const), 0) end
       end
 
       ##
