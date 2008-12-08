@@ -49,7 +49,7 @@ module Machinery
       end
 
       def self.instructions(isets = {})
-        isets = {isets => :emulate} unless isets.is_a?(Hash)
+        isets = {isets => :emulator} unless isets.is_a?(Hash)
         isets.each do |iset, action|
           include iset
           iset.constants.each do |const|
@@ -60,10 +60,10 @@ module Machinery
         end
       end
 
-      def self.define_instruction(name, insn = nil, action = :emulate)
+      def self.define_instruction(name, insn = nil, action = :emulator)
         insn = const_get(name.to_s.upcase) unless insn
-        define_method(name.to_s.downcase) do |*operands|
-          insn.new(*operands).__send__(action, self)
+        if (block = insn.send(action)).is_a?(Proc)
+          define_method(name.to_s.downcase, &block)
         end
       end
 

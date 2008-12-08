@@ -12,60 +12,103 @@ module Machinery
     class Instruction
       attr_accessor :opcode, :operands
 
-      def self.[](*args)
-        self # TODO
-      end
-
+      ##
+      # Returns the instruction name.
       def self.instruction_name()
-        name.split('::').last.to_sym
+        (@@instructions[self][:name] rescue nil) || name.split('::').last.to_sym
       end
 
-      def self.opcode(opcode)
-        define_method(:initialize) do |*operands|
-          @opcode, @operands = opcode, operands
+      ##
+      # Defines or retrieve the opcode.
+      def self.opcode(opcode = nil)
+        if opcode
+          self.opcode = opcode
+          define_method(:initialize) do |*operands|
+            @opcode, @operands = opcode, operands
+          end
+        else
+          @@instructions[self][:opcode]
         end
       end
 
-      def self.encode(*params, &block)
-        # TODO
+      ##
+      # Defines an operand.
+      def self.operand(name, index = 0, options = {})
+        (self.operands ||= []) << name
+        define_method(name)        { operands[index] }
+        define_method(:"#{name}=") { |value| operands[index] = value }
       end
 
-      def self.decode(*params, &block)
-        # TODO
+      ##
+      # Returns the names of the instruction's operands, if any.
+      def self.operands
+        (@@instructions[self][:operands] rescue nil) || []
       end
 
-      def self.cycles(*params, &block)
-        # TODO
+      ##
+      # Defines an encoder block.
+      def self.encode(&block)
+        self.encoder = block
       end
 
-      # Requires a StackMachine
-      def self.stack_name(name)
-        define_method(:stack_name) { name }
+      def self.encoder()
+        opcode = opcode
+        action(:encoder) { emit opcode }
       end
 
-      # Requires a StackMachine
+      ##
+      # Defines a decoder block.
+      def self.decode(&block)
+        self.decoder = block
+      end
+
+      def self.decoder()
+        action(:decoder)
+      end
+
+      # (Requires a StackMachine)
       def self.effect(diagram = {})
         before, after = diagram.first
-        define_method(:emulate) do |receiver|
-          receiver.__send__(stack_name).shuffle(before, after)
-        end
+        emulate { stack.shuffle(before, after) } # note implicit stack accessor
       end
 
-      def self.emulate(*params, &block)
-        define_method(:emulate) do |receiver|
-          receiver.instance_eval(&block)
-        end
+      ##
+      # Defines an emulator block.
+      def self.emulate(&block)
+        self.emulator = block
       end
 
-      def self.translate(*params, &block)
-        # TODO
+      def self.emulator()
+        action(:emulator)
+      end
+
+      ##
+      # Defines a translator block.
+      def self.translate(&block)
+        self.translator = block
+      end
+
+      def self.translator()
+        action(:translator)
+      end
+
+      ##
+      # Defines cycle timings for this instruction.
+      def self.cycles(cycles)
+        self.cycles = cycles
+        define_method(:cycles) { cycles }
+      end
+
+      def self.[](*args) #:nodoc:
+        @@operands = args
+        self
       end
 
       def initialize(opcode, *operands)
         @opcode, @operands = opcode, operands
       end
 
-      def operands?
+      def operands?()
         !operands.empty?
       end
 
@@ -104,6 +147,32 @@ module Machinery
       def inspect
         "#<#{self.class}(#{to_s})>"
       end
+
+      protected
+        @@instructions = {}
+        @@operands = []
+
+        def self.inherited(subclass)
+          unless @@operands.empty?
+            @@operands.each_with_index { |operand, index| subclass.operand(operand, index) }
+            @@operands = []
+          end
+        end
+
+        def self.method_missing(symbol, *args, &block)
+          if symbol.to_s =~ /^([^=]+)=$/
+            @@instructions[self] ||= {}
+            @@instructions[self][$1.to_sym] = args.first
+          else
+            super
+          end
+        end
+
+        def self.action(action, error = Emulator::UnsupportedInstruction, &block) #:nodoc:
+          name = instruction_name
+          @@instructions[self][action] rescue (block_given? ? block : lambda { |*args| raise error.new(name) })
+        end
+
     end
 
     ##
