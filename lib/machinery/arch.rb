@@ -12,6 +12,14 @@ module Machinery
     class Instruction
       attr_accessor :opcode, :operands
 
+      def self.[](*args)
+        self # TODO
+      end
+
+      def self.instruction_name()
+        name.split('::').last.to_sym
+      end
+
       def self.opcode(opcode)
         define_method(:initialize) do |*operands|
           @opcode, @operands = opcode, operands
@@ -30,7 +38,26 @@ module Machinery
         # TODO
       end
 
+      # Requires a StackMachine
+      def self.stack_name(name)
+        define_method(:stack_name) { name }
+      end
+
+      # Requires a StackMachine
+      def self.effect(diagram = {})
+        before, after = diagram.first
+        define_method(:emulate) do |receiver|
+          receiver.__send__(stack_name).shuffle(before, after)
+        end
+      end
+
       def self.emulate(*params, &block)
+        define_method(:emulate) do |receiver|
+          receiver.instance_eval(&block)
+        end
+      end
+
+      def self.translate(*params, &block)
         # TODO
       end
 
@@ -80,6 +107,32 @@ module Machinery
     end
 
     ##
+    # A parameterized machine instruction.
+    def self.Instruction(*operands) #:nodoc:
+      Instruction[*operands]
+    end
+
+    ##
+    # A machine instruction set.
+    module InstructionSet
+      def Instruction(*operands) #:nodoc:
+        Instruction[*operands]
+      end
+    end
+
+    ##
+    # A parameterized machine instruction set.
+    def self.InstructionSet(klass = Instruction) #:nodoc:
+      if klass === Instruction
+        InstructionSet
+      else
+        InstructionSet.clone.module_eval do
+          define_method(:Instruction) { |*operands| klass[*operands] }; self
+        end
+      end
+    end
+
+    ##
     # A machine's RAM or ROM.
     class Memory
       # TODO
@@ -116,11 +169,27 @@ module Machinery
       end
 
       def push(*args)
-        @element.push(*args)
+        @elements.push(*args)
       end
 
       def pop
         @elements.pop
+      end
+
+      def shuffle(before, after)
+        bindings, values = {}, []
+
+        before.reverse.each do |name|
+          values << (bindings[name] = pop)
+        end
+
+        after.each do |name|
+          if name.is_a?(Proc)
+            push name.call(*values.reverse)
+          else
+            push bindings[name]
+          end
+        end
       end
     end
 
