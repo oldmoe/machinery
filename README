@@ -1,0 +1,2 @@
+Toolchain machinery for compilers, code generators, assemblers, linkers and
+emulators. All written in pure honest-to-goodness Ruby.
