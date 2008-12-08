@@ -134,14 +134,13 @@ module Machinery module Architecture
     ##
     # A PythonVM instruction.
     class Instruction < Architecture::Instruction
-      stack_name :stack
-
       def self.inherited(subclass)
         begin
           subclass.opcode(Opcodes.const_get(subclass.instruction_name))
         rescue NameError => e
           raise NameError.new("missing opcode constant for instruction #{subclass.instruction_name}")
         end
+        super
       end
     end
 
@@ -300,7 +299,7 @@ module Machinery module Architecture
       ##
       # Alias for <tt>SLICE+0</tt>.
       class SLICE < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
@@ -310,25 +309,25 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS = TOS1[TOS:]</tt>.
       class SLICE_1 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>TOS = TOS1[:TOS]</tt>.
       class SLICE_2 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>TOS = TOS2[TOS1:TOS]</tt>.
       class SLICE_3 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Alias for <tt>STORE_SLICE+0</tt>.
       class STORE_SLICE < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
@@ -338,25 +337,25 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS1[TOS:] = TOS2</tt>.
       class STORE_SLICE_1 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>TOS1[:TOS] = TOS2</tt>.
       class STORE_SLICE_2 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>TOS2[TOS1:TOS] = TOS3</tt>.
       class STORE_SLICE_3 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Alias for <tt>DELETE_SLICE+0</tt>.
       class DELETE_SLICE < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
@@ -366,19 +365,19 @@ module Machinery module Architecture
       ##
       # Implements <tt>del TOS1[TOS:]</tt>.
       class DELETE_SLICE_1 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>del TOS1[:TOS]</tt>.
       class DELETE_SLICE_2 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>del TOS2[TOS1:TOS]</tt>.
       class DELETE_SLICE_3 < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
@@ -542,13 +541,13 @@ module Machinery module Architecture
       ##
       # Terminates a loop due to a <tt>break</tt> statement.
       class BREAK_LOOP < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Cleans up the stack when a <tt>with</tt> statement block exits. On top of the stack are 1-3 values indicating how/why the <tt>finally</tt> clause was entered.
       class WITH_CLEANUP < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
@@ -562,320 +561,321 @@ module Machinery module Architecture
       # Returns with TOS to the caller of the function.
       class RETURN_VALUE < Instruction()
         effect  [:retval] => []
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Loads all symbols not starting with <tt>'_'</tt> directly from the module TOS to the local namespace. The module is popped after loading all names. This opcode implements <tt>from module import *</tt>.
       class IMPORT_STAR < Instruction()
         effect  [:v] => []
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>exec TOS2,TOS1,TOS</tt>. The compiler fills missing optional parameters with <tt>None</tt>.
       class EXEC_STMT < Instruction()
         effect  [:u, :v, :w] => []
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Pops TOS and yields it from a generator.
       class YIELD_VALUE < Instruction()
         effect  [:retval] => []
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Removes one block from the block stack. Per frame, there is a stack of blocks, denoting nested loops, <tt>try</tt> statements, and such.
       class POP_BLOCK < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Terminates a <tt>finally</tt> clause. The interpreter recalls whether the exception has to be re-raised, or whether the function returns, and continues with the outer-next block.
       class END_FINALLY < Instruction()
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Creates a new class object. TOS is the methods dictionary, TOS1 the tuple of the names of the base classes, and TOS2 the class name.
       class BUILD_CLASS < Instruction()
         effect  [:w, :v, :u] => [:x]
-        # TODO
+        emulate do end # TODO
       end
 
       ##
       # Implements <tt>name = TOS</tt>. <em>namei</em> is the index of <em>name</em> in the attribute <tt>co_names</tt> of the code object. The compiler tries to use <tt>STORE_FAST</tt> or <tt>STORE_GLOBAL</tt> if possible.
       class STORE_NAME < Instruction(:namei)
         effect  [:v] => []
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Implements <tt>del name</tt>, where <em>namei</em> is the index into <tt>co_names</tt> attribute of the code object.
       class DELETE_NAME < Instruction(:namei)
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Unpacks TOS into <em>count</em> individual values, which are put onto the stack right-to-left.
       class UNPACK_SEQUENCE < Instruction(:count)
         effect  [:v] => []
-        # TODO
+        emulate do |count| end # TODO
       end
 
       ##
       # TOS is an iterator. Call its <tt>next()</tt> method. If this yields a new value, push it on the stack (leaving the iterator below it). If the iterator indicates it is exhausted TOS is popped, and the bytecode counter is incremented by <em>delta</em>.
       class FOR_ITER < Instruction(:delta)
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # Implements <tt>TOS.name = TOS1</tt>, where <em>namei</em> is the index of <em>name</em> in <tt>co_names</tt>.
       class STORE_ATTR < Instruction(:namei)
         effect  [:u, :v] => []
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Implements <tt>del TOS.name</tt>, using <em>namei</em> as index into <tt>co_names</tt>.
       class DELETE_ATTR < Instruction(:namei)
         effect  [:v] => []
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Works as <tt>STORE_NAME</tt>, but stores the name as a global.
       class STORE_GLOBAL < Instruction(:namei)
         effect  [:v] => []
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Works as <tt>DELETE_NAME</tt>, but deletes a global name.
       class DELETE_GLOBAL < Instruction(:namei)
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Duplicate <em>count</em> items, keeping them in the same order. Due to implementation limits, <em>count</em> should be between 1 and 5 inclusive.
       class DUP_TOPX < Instruction(:count)
-        # TODO
+        emulate do |count| end # TODO
       end
 
       ##
       # Pushes <tt>co_consts[consti]</tt> onto the stack.
       class LOAD_CONST < Instruction(:consti)
         effect  [] => [:x]
-        emulate do |consti| stack.push(codeobject.consts[consti]) end
-        encode  do |const|  emit(opcode, block.const(const), 0) end
+        decode  do |consti| codeobject.consts[consti] end
+        emulate do |const| stack.push(const) end
+        encode  do |const| emit(opcode, block.const(const), 0) end
       end
 
       ##
       # Pushes the value associated with <tt>co_names[namei]</tt> onto the stack.
       class LOAD_NAME < Instruction(:namei)
         effect  [] => [:x]
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Creates a tuple consuming <em>count</em> items from the stack, and pushes the resulting tuple onto the stack.
       class BUILD_TUPLE < Instruction(:count)
-        # TODO
+        emulate do |count| end # TODO
       end
 
       ##
       # Works as <tt>BUILD_TUPLE</tt>, but creates a list.
       class BUILD_LIST < Instruction(:count)
-        # TODO
+        emulate do |count| end # TODO
       end
 
       ##
       # Pushes a new dictionary object onto the stack. The dictionary is pre-sized to hold <em>count</em> entries.
       class BUILD_MAP < Instruction(:count)
         effect  [] => [:x]
-        emulate do stack.push({}) end
+        emulate do |count| stack.push({}) end
       end
 
       ##
       # Replaces TOS with <tt>getattr(TOS, co_names[namei])</tt>.
       class LOAD_ATTR < Instruction(:namei)
         effect  [:v] => [:x]
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Performs a Boolean operation. The operation name can be found in <tt>cmp_op[opname]</tt>.
       class COMPARE_OP < Instruction(:opname)
         effect  [:v, :w] => [:x]
-        # TODO
+        emulate do |opname| end # TODO
       end
 
       ##
       # Imports the module <tt>co_names[namei]</tt>. TOS and TOS1 are popped and provide the <em>fromlist</em> and <em>level</em> arguments of <tt>__import__()</tt>. The module object is pushed onto the stack. The current namespace is not affected: for a proper <tt>import</tt> statement, a subsequent <tt>STORE_FAST</tt> instruction modifies the namespace.
       class IMPORT_NAME < Instruction(:namei)
         effect  [:u, :v] => []
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Loads the attribute <tt>co_names[namei]</tt> from the module found in TOS. The resulting object is pushed onto the stack, to be subsequently stored by a <tt>STORE_FAST</tt> instruction.
       class IMPORT_FROM < Instruction(:namei)
         effect  [:v] => [:v, :x]
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Increments bytecode counter by <em>delta</em>.
       class JUMP_FORWARD < Instruction(:delta)
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # If TOS is false, increment the bytecode counter by <em>delta</em>. TOS is not changed.
       class JUMP_IF_FALSE < Instruction(:delta)
         effect  [:w] => [:w]
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # If TOS is true, increment the bytecode counter by <em>delta</em>. TOS is left on the stack.
       class JUMP_IF_TRUE < Instruction(:delta)
         effect  [:w] => [:w]
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # Set bytecode counter to <em>target</em>.
       class JUMP_ABSOLUTE < Instruction(:target)
-        # TODO
+        emulate do |target| end # TODO
       end
 
       ##
       # Loads the global named <tt>co_names[namei]</tt> onto the stack.
       class LOAD_GLOBAL < Instruction(:namei)
         effect  [] => [:x]
-        # TODO
+        emulate do |namei| end # TODO
       end
 
       ##
       # Continues a loop due to a <tt>continue</tt> statement. <em>target</em> is the address to jump to (which should be a <tt>FOR_ITER</tt> instruction).
       class CONTINUE_LOOP < Instruction(:target)
-        # TODO
+        emulate do |target| end # TODO
       end
 
       ##
       # Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of <em>delta</em> bytes.
       class SETUP_LOOP < Instruction(:delta)
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # Pushes a try block from a <tt>try-except</tt> clause onto the block stack. <em>delta</em> points to the first <tt>except</tt> block.
       class SETUP_EXCEPT < Instruction(:delta)
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # Pushes a try block from a <tt>try-except</tt> clause onto the block stack. <em>delta</em> points to the <tt>finally</tt> block.
       class SETUP_FINALLY < Instruction(:delta)
-        # TODO
+        emulate do |delta| end # TODO
       end
 
       ##
       # Pushes a reference to the local <tt>co_varnames[var_num]</tt> onto the stack.
       class LOAD_FAST < Instruction(:var_num)
         effect  [] => [:x]
-        # TODO
+        emulate do |var_num| end # TODO
       end
 
       ##
       # Stores TOS into the local <tt>co_varnames[var_num]</tt>.
       class STORE_FAST < Instruction(:var_num)
         effect  [:v] => []
-        # TODO
+        emulate do |var_num| end # TODO
       end
 
       ##
       # Deletes local <tt>co_varnames[var_num]</tt>.
       class DELETE_FAST < Instruction(:var_num)
-        # TODO
+        emulate do |var_num| end # TODO
       end
 
       ##
       # Raises an exception. <em>argc</em> indicates the number of parameters to the <tt>raise</tt> statement, ranging from 0 to 3. The handler will find the traceback as TOS2, the parameter as TOS1, and the exception as TOS.
       class RAISE_VARARGS < Instruction(:argc)
-        emulate do args = stack.pop(argc) end # TODO
+        emulate do |argc| args = stack.pop(argc) end # TODO
       end
 
       ##
       # Calls a function. The low byte of <em>argc</em> indicates the number of positional parameters, the high byte the number of keyword parameters. On the stack, the opcode finds the keyword parameters first. For each keyword argument, the value is on top of the key. Below the keyword parameters, the positional parameters are on the stack, with the right-most parameter on top. Below the parameters, the function object to call is on the stack. Pops all function arguments, and the function itself off the stack, and pushes the return value.
       class CALL_FUNCTION < Instruction(:argc)
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Pushes a new function object on the stack. TOS is the code associated with the function. The function object is defined to have <em>argc</em> default parameters, which are found below TOS.
       class MAKE_FUNCTION < Instruction(:argc)
         effect  [:v] => [:x] # FIXME
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Pushes a slice object on the stack. <em>argc</em> must be 2 or 3. If it is 2, <tt>slice(TOS1, TOS)</tt> is pushed; if it is 3, <tt>slice(TOS2, TOS1, TOS)</tt> is pushed. See the <tt>slice()</tt> built-in function for more information.
       class BUILD_SLICE < Instruction(:argc)
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Creates a new function object, sets its <em>func_closure</em> slot, and pushes it on the stack. TOS is the code associated with the function, TOS1 the tuple containing cells for the closure's free variables. The function also has <em>argc</em> default parameters, which are found below the cells.
       class MAKE_CLOSURE < Instruction(:argc)
         effect  [:v] => [:x] # FIXME
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Pushes a reference to the cell contained in slot <em>i</em> of the cell and free variable storage. The name of the variable is <tt>co_cellvars[i]</tt> if <em>i</em> is less than the length of <em>co_cellvars</em>. Otherwise it is <tt>co_freevars[i - len(co_cellvars)]</tt>.
       class LOAD_CLOSURE < Instruction(:i)
-        # TODO
+        emulate do |i| end # TODO
       end
 
       ##
       # Loads the cell contained in slot <em>i</em> of the cell and free variable storage. Pushes a reference to the object the cell contains on the stack.
       class LOAD_DEREF < Instruction(:i)
-        # TODO
+        emulate do |i| end # TODO
       end
 
       ##
       # Stores TOS into the cell contained in slot <em>i</em> of the cell and free variable storage.
       class STORE_DEREF < Instruction(:i)
         effect  [:w] => []
-        # TODO
+        emulate do |i| end # TODO
       end
 
       ##
       # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the variable argument list, followed by keyword and positional arguments.
       class CALL_FUNCTION_VAR < Instruction(:argc)
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the keyword arguments dictionary, followed by explicit keyword and positional arguments.
       class CALL_FUNCTION_KW < Instruction(:argc)
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Calls a function. <em>argc</em> is interpreted as in <tt>CALL_FUNCTION</tt>. The top element on the stack contains the keyword arguments dictionary, followed by the variable-arguments tuple, followed by explicit keyword and positional arguments.
       class CALL_FUNCTION_VAR_KW < Instruction(:argc)
-        # TODO
+        emulate do |argc| end # TODO
       end
 
       ##
       # Prefixes any opcode which has an argument too big to fit into the default two bytes. <em>ext</em> holds two additional bytes which, taken together with the subsequent opcode's argument, comprise a four-byte argument, <em>ext</em> being the two most-significant bytes.
       class EXTENDED_ARG < Instruction(:ext)
-        # TODO
+        emulate do |ext| end # TODO
       end
     end
   end
