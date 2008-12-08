@@ -28,13 +28,19 @@ module Machinery
         if !instruction && (caller(3)[0] =~ /\A(.*?):(\d+):in `([^']+)'/ rescue nil)
           instruction = $3.to_sym
         end
+        instruction = "unsupported instruction #{instruction.to_s.upcase} encountered" if instruction.is_a?(Symbol)
         super instruction.to_s
       end
     end
 
     ##
     # An invalid instruction was encountered.
-    class InvalidInstruction < NoMethodError; end
+    class InvalidInstruction < NoMethodError
+      def initialize(instruction)
+        instruction = "invalid instruction #{instruction.to_s.upcase} encountered" if instruction.is_a?(Symbol)
+        super instruction.to_s
+      end
+    end
 
     protected
 
