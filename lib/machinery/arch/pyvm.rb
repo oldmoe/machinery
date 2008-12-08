@@ -155,38 +155,37 @@ module Machinery module Architecture
       ##
       # Indicates end-of-code to the compiler; not used by the interpreter.
       class STOP_CODE < Instruction()
-        emulate do raise InvalidInstruction end
+        emulate do raise Emulator::InvalidInstruction.new(:stop_code) end
       end
 
       ##
       # Removes the top-of-stack (TOS) item.
       class POP_TOP < Instruction()
-        effect  [:a] => []
-        emulate do stack.pop end
+        effect  [:v] => []
       end
 
       ##
       # Swaps the two top-most stack items.
       class ROT_TWO < Instruction()
-        effect  [:a, :b] => [:b, :a]
+        effect  [:w, :v] => [:v, :w]
       end
 
       ##
       # Lifts second and third stack item one position up, moves top down to position three.
       class ROT_THREE < Instruction()
-        effect  [:a, :b, :c] => [:c, :a, :b]
+        effect  [:x, :w, :v] => [:v, :x, :w]
       end
 
       ##
       # Duplicates the reference on top of the stack.
       class DUP_TOP < Instruction()
-        effect  [:a] => [:a, :a]
+        effect  [:v] => [:v, :v]
       end
 
       ##
       # Lifts second, third and fourth stack item one position up, moves top down to position four.
       class ROT_FOUR < Instruction()
-        effect  [:a, :b, :c, :d] => [:d, :a, :b, :c]
+        effect  [:x, :w, :v, :u] => [:u, :x, :w, :v]
       end
 
       ##
@@ -198,103 +197,104 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS = +TOS</tt>.
       class UNARY_POSITIVE < Instruction()
-        effect  [:a] => [:b] # TODO
+        effect  [:v] => [:abs.to_proc]
       end
 
       ##
       # Implements <tt>TOS = -TOS</tt>.
       class UNARY_NEGATIVE < Instruction()
-        effect  [:a] => [:b] # TODO
+        effect  [:v] => [-1.method(:*)] # FIXME
       end
 
       ##
       # Implements <tt>TOS = not TOS</tt>.
       class UNARY_NOT < Instruction()
-        effect  [:a] => [:b] # TODO
+        effect  [:v] => [lambda { |v| not v }]
       end
 
       ##
       # Implements <tt>TOS = `TOS`</tt>.
       class UNARY_CONVERT < Instruction()
-        effect  [:a] => [:b] # TODO
+        effect  [:v] => [:inspect.to_proc] # FIXME
       end
 
       ##
       # Implements <tt>TOS = ~TOS</tt>.
       class UNARY_INVERT < Instruction()
-        effect  [:a] => [:b] # TODO
+        effect  [:v] => [:"~".to_proc]
       end
 
       ##
       # Calls <tt>list.append(TOS1, TOS)</tt>. Used to implement list comprehensions.
       class LIST_APPEND < Instruction()
-        effect  [:a, :b] => [] # TODO
+        effect  [:v, :w] => []
+        emulate do w, v = stack.pop(2); v.concat(w) end
       end
 
       ##
       # Implements <tt>TOS = TOS1 ** TOS</tt>.
       class BINARY_POWER < Instruction()
-        effect  [:a, :b] => [:"**".to_proc]
+        effect  [:v, :w] => [:"**".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 * TOS</tt>.
       class BINARY_MULTIPLY < Instruction()
-        effect  [:a, :b] => [:*.to_proc]
+        effect  [:v, :w] => [:*.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
       class BINARY_DIVIDE < Instruction()
-        effect  [:a, :b] => [:"/".to_proc]
+        effect  [:v, :w] => [:"/".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 % TOS</tt>.
       class BINARY_MODULO < Instruction()
-        effect  [:a, :b] => [:"%".to_proc]
+        effect  [:v, :w] => [:"%".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 + TOS</tt>.
       class BINARY_ADD < Instruction()
-        effect  [:a, :b] => [:+.to_proc]
+        effect  [:v, :w] => [:+.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 - TOS</tt>.
       class BINARY_SUBTRACT < Instruction()
-        effect  [:a, :b] => [:"-".to_proc]
+        effect  [:v, :w] => [:"-".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1[TOS]</tt>.
       class BINARY_SUBSCR < Instruction()
-        effect  [:a, :b] => [:[].to_proc]
+        effect  [:v, :w] => [:[].to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 // TOS</tt>.
       class BINARY_FLOOR_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c] # TODO
+        effect  [:v, :w] => [lambda { |v, w| (v / w).floor.to_f }]
       end
 
       ##
       # Implements <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
       class BINARY_TRUE_DIVIDE < Instruction()
-        effect  [:a, :b] => [:"/".to_proc]
+        effect  [:v, :w] => [:"/".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 // TOS</tt>.
       class INPLACE_FLOOR_DIVIDE < Instruction()
-        effect  [:a, :b] => [:c] # TODO
+        effect  [:v, :w] => [lambda { |v, w| (v / w).floor.to_f }]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is in effect.
       class INPLACE_TRUE_DIVIDE < Instruction()
-        effect  [:a, :b] => [:"/".to_proc]
+        effect  [:v, :w] => [:"/".to_proc]
       end
 
       ##
@@ -384,153 +384,159 @@ module Machinery module Architecture
       ##
       # Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.
       class STORE_MAP < Instruction()
-        # TODO
+        effect  [:dict, :value, :key] => [:dict]
+        emulate do w, u, v = stack.pop, stack.pop, stack.peek; v[w] = u end
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 + TOS</tt>.
       class INPLACE_ADD < Instruction()
-        effect  [:a, :b] => [:+.to_proc]
+        effect  [:v, :w] => [:+.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 - TOS</tt>.
       class INPLACE_SUBTRACT < Instruction()
-        effect  [:a, :b] => [:"-".to_proc]
+        effect  [:v, :w] => [:"-".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 * TOS</tt>.
       class INPLACE_MULTIPLY < Instruction()
-        effect  [:a, :b] => [:*.to_proc]
+        effect  [:v, :w] => [:*.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 / TOS</tt> when <tt>from __future__ import division</tt> is not in effect.
       class INPLACE_DIVIDE < Instruction()
-        effect  [:a, :b] => [:"/".to_proc]
+        effect  [:v, :w] => [:"/".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 % TOS.</tt>
       class INPLACE_MODULO < Instruction()
-        effect  [:a, :b] => [:"%".to_proc]
+        effect  [:v, :w] => [:"%".to_proc]
       end
 
       ##
       # Implements <tt>TOS1[TOS] = TOS2</tt>.
       class STORE_SUBSCR < Instruction()
-        # TODO
+        effect  [:u, :v, :w] => []
+        emulate do w, v, u = stack.pop(3); v[w] = u end
       end
 
       ##
       # Implements <tt>del TOS1[TOS]</tt>.
       class DELETE_SUBSCR < Instruction()
-        # TODO
+        effect  [:v, :w] => []
+        emulate do w, v = stack.pop(2); v.delete(w) end
       end
 
       ##
       # Implements <tt>TOS = TOS1 << TOS</tt>.
       class BINARY_LSHIFT < Instruction()
-        effect  [:a, :b] => [:<<.to_proc]
+        effect  [:v, :w] => [:<<.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 >> TOS</tt>.
       class BINARY_RSHIFT < Instruction()
-        effect  [:a, :b] => [:>>.to_proc]
+        effect  [:v, :w] => [:>>.to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 & TOS</tt>.
       class BINARY_AND < Instruction()
-        effect  [:a, :b] => [:"&".to_proc]
+        effect  [:v, :w] => [:"&".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 ^ TOS</tt>.
       class BINARY_XOR < Instruction()
-        effect  [:a, :b] => [:"^".to_proc]
+        effect  [:v, :w] => [:"^".to_proc]
       end
 
       ##
       # Implements <tt>TOS = TOS1 | TOS</tt>.
       class BINARY_OR < Instruction()
-        effect  [:a, :b] => [:"|".to_proc]
+        effect  [:v, :w] => [:"|".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 ** TOS</tt>.
       class INPLACE_POWER < Instruction()
-        effect  [:a, :b] => [:"**".to_proc]
+        effect  [:v, :w] => [:"**".to_proc]
       end
 
       ##
       # Implements <tt>TOS = iter(TOS)</tt>.
       class GET_ITER < Instruction()
-        # TODO
+        effect  [:v] => [:x]
+        emulate do end # TODO
       end
 
       ##
       # Implements the expression statement for the interactive mode. TOS is removed from the stack and printed. In non-interactive mode, an expression statement is terminated with <tt>POP_STACK</tt>.
       class PRINT_EXPR < Instruction()
-        effect  [:a] => []
-        emulate do puts stack.pop end
+        effect  [:v] => []
+        emulate do Kernel.print(v = stack.pop) end
       end
 
       ##
       # Prints TOS to the file-like object bound to <tt>sys.stdout</tt>. There is one such instruction for each item in the <tt>print</tt> statement.
       class PRINT_ITEM < Instruction()
-        effect  [:a] => []
-        # TODO
+        effect  [:v] => []
+        emulate do $stdout.print(v = stack.pop) end # FIXME?
       end
 
       ##
       # Prints a new line on <tt>sys.stdout</tt>. This is generated as the last operation of a <tt>print</tt> statement, unless the statement ends with a comma.
       class PRINT_NEWLINE < Instruction()
-        emulate do puts end
+        emulate do $stdout.puts end # FIXME?
       end
 
       ##
       # Like <tt>PRINT_ITEM</tt>, but prints the item second from TOS to the file-like object at TOS. This is used by the extended <tt>print</tt> statement.
       class PRINT_ITEM_TO < Instruction()
-        # TODO
+        effect  [:v, :w] => []
+        emulate do (w = stack.pop).print(v = stack.pop) end
       end
 
       ##
       # Like <tt>PRINT_NEWLINE</tt>, but prints the new line on the file-like object on the TOS. This is used by the extended <tt>print</tt> statement.
       class PRINT_NEWLINE_TO < Instruction()
-        # TODO
+        effect  [:w] => []
+        emulate do (w = stack.pop).puts end
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 << TOS</tt>.
       class INPLACE_LSHIFT < Instruction()
-        effect  [:a, :b] => [:<<.to_proc]
+        effect  [:v, :w] => [:<<.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 >> TOS</tt>.
       class INPLACE_RSHIFT < Instruction()
-        effect  [:a, :b] => [:>>.to_proc]
+        effect  [:v, :w] => [:>>.to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 & TOS</tt>.
       class INPLACE_AND < Instruction()
-        effect  [:a, :b] => [:"&".to_proc]
+        effect  [:v, :w] => [:"&".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 ^ TOS</tt>.
       class INPLACE_XOR < Instruction()
-        effect  [:a, :b] => [:"^".to_proc]
+        effect  [:v, :w] => [:"^".to_proc]
       end
 
       ##
       # Implements in-place <tt>TOS = TOS1 | TOS</tt>.
       class INPLACE_OR < Instruction()
-        effect  [:a, :b] => [:"|".to_proc]
+        effect  [:v, :w] => [:"|".to_proc]
       end
 
       ##
@@ -548,32 +554,35 @@ module Machinery module Architecture
       ##
       # Pushes a reference to the locals of the current scope on the stack. This is used in the code for a class definition: after the class body is evaluated, the locals are passed to the class definition.
       class LOAD_LOCALS < Instruction()
-        # TODO
+        effect  [] => [:x]
+        emulate do stack.push(codeobject.locals) end # TODO
       end
 
       ##
       # Returns with TOS to the caller of the function.
       class RETURN_VALUE < Instruction()
-        effect  [:a] => []
+        effect  [:retval] => []
         # TODO
       end
 
       ##
       # Loads all symbols not starting with <tt>'_'</tt> directly from the module TOS to the local namespace. The module is popped after loading all names. This opcode implements <tt>from module import *</tt>.
       class IMPORT_STAR < Instruction()
+        effect  [:v] => []
         # TODO
       end
 
       ##
       # Implements <tt>exec TOS2,TOS1,TOS</tt>. The compiler fills missing optional parameters with <tt>None</tt>.
       class EXEC_STMT < Instruction()
+        effect  [:u, :v, :w] => []
         # TODO
       end
 
       ##
       # Pops TOS and yields it from a generator.
       class YIELD_VALUE < Instruction()
-        effect  [:a] => []
+        effect  [:retval] => []
         # TODO
       end
 
@@ -592,12 +601,14 @@ module Machinery module Architecture
       ##
       # Creates a new class object. TOS is the methods dictionary, TOS1 the tuple of the names of the base classes, and TOS2 the class name.
       class BUILD_CLASS < Instruction()
+        effect  [:w, :v, :u] => [:x]
         # TODO
       end
 
       ##
       # Implements <tt>name = TOS</tt>. <em>namei</em> is the index of <em>name</em> in the attribute <tt>co_names</tt> of the code object. The compiler tries to use <tt>STORE_FAST</tt> or <tt>STORE_GLOBAL</tt> if possible.
       class STORE_NAME < Instruction(:namei)
+        effect  [:v] => []
         # TODO
       end
 
@@ -610,6 +621,7 @@ module Machinery module Architecture
       ##
       # Unpacks TOS into <em>count</em> individual values, which are put onto the stack right-to-left.
       class UNPACK_SEQUENCE < Instruction(:count)
+        effect  [:v] => []
         # TODO
       end
 
@@ -622,18 +634,21 @@ module Machinery module Architecture
       ##
       # Implements <tt>TOS.name = TOS1</tt>, where <em>namei</em> is the index of <em>name</em> in <tt>co_names</tt>.
       class STORE_ATTR < Instruction(:namei)
+        effect  [:u, :v] => []
         # TODO
       end
 
       ##
       # Implements <tt>del TOS.name</tt>, using <em>namei</em> as index into <tt>co_names</tt>.
       class DELETE_ATTR < Instruction(:namei)
+        effect  [:v] => []
         # TODO
       end
 
       ##
       # Works as <tt>STORE_NAME</tt>, but stores the name as a global.
       class STORE_GLOBAL < Instruction(:namei)
+        effect  [:v] => []
         # TODO
       end
 
@@ -652,7 +667,7 @@ module Machinery module Architecture
       ##
       # Pushes <tt>co_consts[consti]</tt> onto the stack.
       class LOAD_CONST < Instruction(:consti)
-        effect  [] => [:a]
+        effect  [] => [:x]
         emulate do |consti| stack.push(codeobject.consts[consti]) end
         encode  do |const|  emit(opcode, block.const(const), 0) end
       end
@@ -660,6 +675,7 @@ module Machinery module Architecture
       ##
       # Pushes the value associated with <tt>co_names[namei]</tt> onto the stack.
       class LOAD_NAME < Instruction(:namei)
+        effect  [] => [:x]
         # TODO
       end
 
@@ -678,30 +694,35 @@ module Machinery module Architecture
       ##
       # Pushes a new dictionary object onto the stack. The dictionary is pre-sized to hold <em>count</em> entries.
       class BUILD_MAP < Instruction(:count)
-        # TODO
+        effect  [] => [:x]
+        emulate do stack.push({}) end
       end
 
       ##
       # Replaces TOS with <tt>getattr(TOS, co_names[namei])</tt>.
       class LOAD_ATTR < Instruction(:namei)
+        effect  [:v] => [:x]
         # TODO
       end
 
       ##
       # Performs a Boolean operation. The operation name can be found in <tt>cmp_op[opname]</tt>.
       class COMPARE_OP < Instruction(:opname)
+        effect  [:v, :w] => [:x]
         # TODO
       end
 
       ##
       # Imports the module <tt>co_names[namei]</tt>. TOS and TOS1 are popped and provide the <em>fromlist</em> and <em>level</em> arguments of <tt>__import__()</tt>. The module object is pushed onto the stack. The current namespace is not affected: for a proper <tt>import</tt> statement, a subsequent <tt>STORE_FAST</tt> instruction modifies the namespace.
       class IMPORT_NAME < Instruction(:namei)
+        effect  [:u, :v] => []
         # TODO
       end
 
       ##
       # Loads the attribute <tt>co_names[namei]</tt> from the module found in TOS. The resulting object is pushed onto the stack, to be subsequently stored by a <tt>STORE_FAST</tt> instruction.
       class IMPORT_FROM < Instruction(:namei)
+        effect  [:v] => [:v, :x]
         # TODO
       end
 
@@ -714,12 +735,14 @@ module Machinery module Architecture
       ##
       # If TOS is false, increment the bytecode counter by <em>delta</em>. TOS is not changed.
       class JUMP_IF_FALSE < Instruction(:delta)
+        effect  [:w] => [:w]
         # TODO
       end
 
       ##
       # If TOS is true, increment the bytecode counter by <em>delta</em>. TOS is left on the stack.
       class JUMP_IF_TRUE < Instruction(:delta)
+        effect  [:w] => [:w]
         # TODO
       end
 
@@ -732,6 +755,7 @@ module Machinery module Architecture
       ##
       # Loads the global named <tt>co_names[namei]</tt> onto the stack.
       class LOAD_GLOBAL < Instruction(:namei)
+        effect  [] => [:x]
         # TODO
       end
 
@@ -762,12 +786,14 @@ module Machinery module Architecture
       ##
       # Pushes a reference to the local <tt>co_varnames[var_num]</tt> onto the stack.
       class LOAD_FAST < Instruction(:var_num)
+        effect  [] => [:x]
         # TODO
       end
 
       ##
       # Stores TOS into the local <tt>co_varnames[var_num]</tt>.
       class STORE_FAST < Instruction(:var_num)
+        effect  [:v] => []
         # TODO
       end
 
@@ -780,7 +806,7 @@ module Machinery module Architecture
       ##
       # Raises an exception. <em>argc</em> indicates the number of parameters to the <tt>raise</tt> statement, ranging from 0 to 3. The handler will find the traceback as TOS2, the parameter as TOS1, and the exception as TOS.
       class RAISE_VARARGS < Instruction(:argc)
-        # TODO
+        emulate do args = stack.pop(argc) end # TODO
       end
 
       ##
@@ -792,6 +818,7 @@ module Machinery module Architecture
       ##
       # Pushes a new function object on the stack. TOS is the code associated with the function. The function object is defined to have <em>argc</em> default parameters, which are found below TOS.
       class MAKE_FUNCTION < Instruction(:argc)
+        effect  [:v] => [:x] # FIXME
         # TODO
       end
 
@@ -804,6 +831,7 @@ module Machinery module Architecture
       ##
       # Creates a new function object, sets its <em>func_closure</em> slot, and pushes it on the stack. TOS is the code associated with the function, TOS1 the tuple containing cells for the closure's free variables. The function also has <em>argc</em> default parameters, which are found below the cells.
       class MAKE_CLOSURE < Instruction(:argc)
+        effect  [:v] => [:x] # FIXME
         # TODO
       end
 
@@ -822,6 +850,7 @@ module Machinery module Architecture
       ##
       # Stores TOS into the cell contained in slot <em>i</em> of the cell and free variable storage.
       class STORE_DEREF < Instruction(:i)
+        effect  [:w] => []
         # TODO
       end
 
