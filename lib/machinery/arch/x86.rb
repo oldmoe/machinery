@@ -1,6 +1,6 @@
 require 'machinery/arch'
 
-module Machinery::Architecture
+module Machinery module Architecture
 
   ##
   # The x86-16 (8086, 80186, 80286) architecture.
@@ -98,7 +98,7 @@ module Machinery::Architecture
   # @see http://developer.intel.com/products/processor/manuals/
   module X86 extend RegisterMachine and include X86_64
     ##
-    # x86 instruction set opcodes.
+    # Some x86 instruction opcodes.
     module Opcodes
       AAA                  = 0x37     # [x86]
       AAS                  = 0x3F     # [x86]
@@ -245,4 +245,4 @@ module Machinery::Architecture
     end
   end
 
-end
+end end

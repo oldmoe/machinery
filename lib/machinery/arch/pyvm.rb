@@ -4,11 +4,11 @@ module Machinery module Architecture
 
   ##
   # The Python 2.6 virtual machine architecture.
-  module PythonVM extend StackMachine
+  module PythonVM extend Architecture::StackMachine
     stack :stack
 
     ##
-    # The Python virtual machine's opcodes.
+    # The PythonVM instruction opcodes.
     #
     # @see bin/pyc-opcodes.py
     # @see doc/pyc/opcodes-2.6.txt
@@ -132,7 +132,7 @@ module Machinery module Architecture
     end
 
     ##
-    # A Python virtual machine instruction.
+    # A PythonVM instruction.
     class Instruction < Architecture::Instruction
       stack_name :stack
 
@@ -146,7 +146,7 @@ module Machinery module Architecture
     end
 
     ##
-    # The Python virtual machine's instruction set.
+    # The PythonVM instruction set.
     #
     # @see http://docs.python.org/lib/bytecodes.html
     # @see http://docs.python.org/library/dis.html#bytecodes
