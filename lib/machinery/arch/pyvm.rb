@@ -142,6 +142,26 @@ module Machinery module Architecture
         end
         super
       end
+
+      HAVE_ARGUMENT = 90
+
+      ##
+      # Decodes a PythonVM instruction from a bytecode IO stream.
+      def self.load(input)
+        case opcode = input.getc
+          when self.opcode
+            if opcode < HAVE_ARGUMENT
+              self.new
+            else
+              self.new(oparg = input.getc + (input.getc * 256))
+            end
+          else input.ungetc(opcode)
+        end
+      end
+
+      def self.dump(instruction, io = nil)
+        # TODO
+      end
     end
 
     ##
