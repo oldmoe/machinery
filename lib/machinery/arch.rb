@@ -108,6 +108,10 @@ module Machinery
         @opcode, @operands = opcode, operands
       end
 
+      def name
+        self.class.instruction_name
+      end
+
       def operands?()
         !operands.empty?
       end
@@ -125,7 +129,7 @@ module Machinery
 
       def to_s
         #to_a.pack('c*')
-        (opcode.to_s + ' ' + operands.map(&:to_s).join(', ')).strip
+        (name.to_s + '(' + operands.map(&:to_s).join(', ') + ')').strip
       end
 
       def each_byte(&block)
@@ -145,7 +149,7 @@ module Machinery
       end
 
       def inspect
-        "#<#{self.class}(#{to_s})>"
+        "#<#{self.class}(#{operands.map(&:to_s).join(', ')})>"
       end
 
       protected
@@ -186,6 +190,38 @@ module Machinery
     module InstructionSet
       def Instruction(*operands) #:nodoc:
         Instruction[*operands]
+      end
+
+      ##
+      # Returns an array containing the instruction classes defined in this
+      # instruction set module.
+      def instructions
+        constants.map { |instruction_name| const_get(instruction_name) }.select { |instruction| instruction.is_a?(Class) }
+      end
+
+      ##
+      # Decodes an instruction from the given input IO stream.
+      #
+      # When called with a block, decodes instructions until EOF is reached,
+      # yielding each instruction.
+      def decode(input, &block)
+        if block_given?
+          until input.eof?
+            if instruction = decode(input)
+              block.call(instruction)
+            else
+              break # no more known instructions in this stream
+            end
+          end
+        else
+          instructions.each do |instruction_type|
+            if instruction_type.respond_to?(:load)
+              instruction = instruction_type.load(input)
+              return instruction if instruction
+            end
+          end
+          false
+        end
       end
     end
 
