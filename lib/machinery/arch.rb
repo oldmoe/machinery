@@ -82,6 +82,11 @@ module Machinery
         action(:emulator)
       end
 
+      class << self
+        alias_method :simulate, :emulate
+        alias_method :simulator, :emulator
+      end
+
       ##
       # Defines a translator block.
       def self.translate(&block)
@@ -338,6 +343,12 @@ module Machinery
         register = Register.new(name = name.to_sym)
         define_method(name) { register }
       end
+
+      # @see http://en.wikipedia.org/wiki/Program_counter
+      alias_method :counter, :register
+
+      # @see http://en.wikipedia.org/wiki/Status_register
+      alias_method :flags, :register
     end
   end
 end
