@@ -1,3 +1,5 @@
+require 'machinery/extensions/array'
+
 module Machinery
   module Extensions #:nodoc:
 

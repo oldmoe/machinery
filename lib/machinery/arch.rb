@@ -128,17 +128,19 @@ module Machinery
       def to_sxp() to_a end
 
       def to_a
-        #[opcode.to_i, *operands.map(&:to_i)]
         [opcode, *operands]
       end
 
       def to_s
-        #to_a.pack('c*')
         (name.to_s + '(' + operands.map(&:to_s).join(', ') + ')').strip
       end
 
+      def bytes
+        to_a.map(&:to_i).pack('c*')
+      end
+
       def each_byte(&block)
-        to_s.each_byte(&block)
+        bytes.each_byte(&block)
       end
 
       def marshal_load(dumped)
@@ -150,7 +152,7 @@ module Machinery
       end
 
       def write(out)
-        out << to_s
+        out << bytes
       end
 
       def inspect
