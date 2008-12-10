@@ -13,7 +13,7 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class AAA < Instruction
-      opcode  0x37
+      opcode   0x37
     end
 
     ##
@@ -21,7 +21,7 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class AAD < Instruction
-      opcode  0xD50A
+      opcode   0xD50A
     end
 
     ##
@@ -29,7 +29,7 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class AAM < Instruction
-      opcode  0xD40A
+      opcode   0xD40A
     end
 
     ##
@@ -37,7 +37,7 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class AAS < Instruction
-      opcode  0x3F
+      opcode   0x3F
     end
 
     ##
@@ -59,41 +59,41 @@ module Machinery module Architecture
     ##
     # Convert byte to word.
     class CBW < Instruction
-      opcode  0x98 # o16
-      cycles  2
-      emulate do ah = (al & 0x80) ? 0xFF : 0 end
+      opcode   0x98 # o16
+      cycles   2
+      simulate do ah = (al & 0x80) ? 0xFF : 0 end
     end
 
     ##
     # Clear carry flag (CF).
     class CLC < Instruction
-      opcode  0xF8
-      cycles  2
-      emulate do flags[:cf] = false end
+      opcode   0xF8
+      cycles   2
+      simulate do flags[:cf] = false end
     end
 
     ##
     # Clear direction flag (DF).
     class CLD < Instruction
-      opcode  0xFC
-      cycles  2
-      emulate do flags[:df] = false end
+      opcode   0xFC
+      cycles   2
+      simulate do flags[:df] = false end
     end
 
     ##
     # Clear interrupt flag (IF).
     class CLI < Instruction
-      opcode  0xFA
-      cycles  2
-      emulate do flags[:if] = false end
+      opcode   0xFA
+      cycles   2
+      simulate do flags[:if] = false end
     end
 
     ##
     # Complement carry flag (CF).
     class CMC < Instruction
-      opcode  0xF5
-      cycles  2
-      emulate do flags[:cf] = !flags[:cf] end
+      opcode   0xF5
+      cycles   2
+      simulate do flags[:cf] = !flags[:cf] end
     end
 
     ##
@@ -103,21 +103,21 @@ module Machinery module Architecture
     ##
     # Compare string operands.
     class CMPSB < Instruction
-      opcode  0xA6
+      opcode   0xA6
     end
 
     ##
     # Compare string operands.
     class CMPSW < Instruction
-      opcode  0xA7 # o16
+      opcode   0xA7 # o16
     end
 
     ##
     # Convert word to double-word.
     class CWD < Instruction
-      opcode  0x99 # o16
-      cycles  5
-      emulate do dx = (ax & 0x8000) ? 0xFFFF : 0x0000 end
+      opcode   0x99 # o16
+      cycles   5
+      simulate do dx = (ax & 0x8000) ? 0xFFFF : 0x0000 end
     end
 
     ##
@@ -125,8 +125,8 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class DAA < Instruction
-      opcode  0x27
-      cycles  4
+      opcode   0x27
+      cycles   4
     end
 
     ##
@@ -134,8 +134,8 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/Intel_BCD_opcode
     class DAS < Instruction
-      opcode  0x2F
-      cycles  4
+      opcode   0x2F
+      cycles   4
     end
 
     ##
@@ -155,9 +155,9 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/HLT
     class HLT < Instruction
-      opcode  0xF4
-      cycles  2
-      emulate do Thread.pass end
+      opcode   0xF4
+      cycles   2
+      simulate do Thread.pass end
     end
 
     ##
@@ -181,30 +181,30 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/INT_(x86_instruction)
     class INT < Instruction
-      cycles  51
+      cycles   51
     end
 
     ##
     # Call debugger breakpoint.
     class INT3 < Instruction
-      opcode  0xCC
-      cycles  52
-      emulate do int(3) end
+      opcode   0xCC
+      cycles   52
+      simulate do int(3) end
     end
 
     ##
     # Call to interrupt procedure.
     class INTO < Instruction
-      opcode  0xCE
-      cycles  53
-      emulate do int(4) if flags[:of] end
+      opcode   0xCE
+      cycles   53
+      simulate do int(4) if flags[:of] end
     end
 
     ##
     # Interrupt return.
     class IRET < Instruction
-      opcode  0xCF
-      cycles  32
+      opcode   0xCF
+      cycles   32
     end
 
     ##
@@ -340,8 +340,8 @@ module Machinery module Architecture
     ##
     # Load status flags into AH register.
     class LAHF < Instruction
-      opcode  0x9F
-      cycles  4
+      opcode   0x9F
+      cycles   4
     end
 
     ##
@@ -359,23 +359,23 @@ module Machinery module Architecture
     ##
     # Assert LOCK# signal prefix.
     class LOCK < Instruction
-      opcode  0xF0
-      cycles  2
-      emulate do end
+      opcode   0xF0
+      cycles   2
+      simulate do end
     end
 
     ##
     # Load byte at address DS:(E)SI into AL.
     class LODSB < Instruction
-      opcode  0xAC
-      cycles  12
+      opcode   0xAC
+      cycles   12
     end
 
     ##
     # Load word at address DS:(E)SI into AX.
     class LODSW < Instruction
-      opcode  0xAD # o16
-      cycles  12
+      opcode   0xAD # o16
+      cycles   12
     end
 
     ##
@@ -407,15 +407,15 @@ module Machinery module Architecture
     ##
     # Move byte from address DS:(E)SI to ES:(E)DI.
     class MOVSB < Instruction
-      opcode  0xA4
-      cycles  18
+      opcode   0xA4
+      cycles   18
     end
 
     ##
     # Move word from address DS:(E)SI to ES:(E)DI.
     class MOVSW < Instruction
-      opcode  0xA5 # o16
-      cycles  18
+      opcode   0xA5 # o16
+      cycles   18
     end
 
     ##
@@ -431,9 +431,9 @@ module Machinery module Architecture
     #
     # @see http://en.wikipedia.org/wiki/NOP
     class NOP < Instruction
-      opcode  0x90
-      cycles  3
-      emulate do end
+      opcode   0x90
+      cycles   3
+      simulate do end
     end
 
     ##
@@ -481,17 +481,17 @@ module Machinery module Architecture
     ##
     # Repeat string operation prefix.
     class REPE < Instruction
-      opcode  0xF3
-      cycles  2
-      emulate do rep(1) end
+      opcode   0xF3
+      cycles   2
+      simulate do rep(1) end
     end
 
     ##
     # Repeat string operation prefix.
     class REPNE < Instruction
-      opcode  0xF2
-      cycles  2
-      emulate do rep(0) end
+      opcode   0xF2
+      cycles   2
+      simulate do rep(0) end
     end
 
     ##
@@ -505,17 +505,17 @@ module Machinery module Architecture
     ##
     # Return from procedure.
     class RET < Instruction
-      opcode  0xC3
-      cycles  16
-      emulate do ip = pop end
+      opcode   0xC3
+      cycles   16
+      simulate do ip = pop end
     end
 
     ##
     # Far return to calling procedure.
     class RETF < Instruction
-      opcode  0xCB
-      cycles  26
-      emulate do ip = pop and cs = pop end
+      opcode   0xCB
+      cycles   26
+      simulate do ip = pop and cs = pop end
     end
 
     ##
@@ -533,8 +533,8 @@ module Machinery module Architecture
     ##
     # Loads SF, ZF, AF, PF, and CF from AH into EFLAGS register.
     class SAHF < Instruction
-      opcode  0x9E
-      cycles  4
+      opcode   0x9E
+      cycles   4
     end
 
     ##
@@ -552,15 +552,15 @@ module Machinery module Architecture
     ##
     # Scan string: compare AL with byte at ES:(E)DI or RDI then set status flags.
     class SCASB < Instruction
-      opcode  0xAE
-      cycles  15
+      opcode   0xAE
+      cycles   15
     end
 
     ##
     # Scan string: compare AX with word at ES:(E)DI or RDI then set status flags.
     class SCASW < Instruction
-      opcode  0xAF # o16
-      cycles  15
+      opcode   0xAF # o16
+      cycles   15
     end
 
     ##
@@ -574,39 +574,39 @@ module Machinery module Architecture
     ##
     # Set carry flag (CF).
     class STC < Instruction
-      opcode  0xF9
-      cycles  2
-      emulate do flags[:cf] = true end
+      opcode   0xF9
+      cycles   2
+      simulate do flags[:cf] = true end
     end
 
     ##
     # Set direction flag (DF).
     class STD < Instruction
-      opcode  0xFD
-      cycles  2
-      emulate do flags[:df] = true end
+      opcode   0xFD
+      cycles   2
+      simulate do flags[:df] = true end
     end
 
     ##
     # Set the interrupt flag (IF).
     class STI < Instruction
-      opcode  0xFB
-      cycles  2
-      emulate do flags[:if] = true end
+      opcode   0xFB
+      cycles   2
+      simulate do flags[:if] = true end
     end
 
     ##
     # Store string: store AL at address ES:(E)DI.
     class STOSB < Instruction
-      opcode  0xAA
-      cycles  11
+      opcode   0xAA
+      cycles   11
     end
 
     ##
     # Store string: store AX at address ES:(E)DI.
     class STOSW < Instruction
-      opcode  0xAB # o16
-      cycles  11
+      opcode   0xAB # o16
+      cycles   11
     end
 
     ##
@@ -622,9 +622,9 @@ module Machinery module Architecture
     ##
     # Check pending unmasked floating-point exceptions.
     class WAIT < Instruction
-      opcode  0x9B
-      cycles  4
-      emulate do nop end
+      opcode   0x9B
+      cycles   4
+      simulate do nop end
     end
 
     ##
@@ -634,8 +634,8 @@ module Machinery module Architecture
     ##
     # Table look-up translation: set AL to memory byte DS:[(E)BX + unsigned AL].
     class XLATB < Instruction
-      opcode  0xD7
-      cycles  11
+      opcode   0xD7
+      cycles   11
     end
 
     ##

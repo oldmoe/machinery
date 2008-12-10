@@ -11,13 +11,13 @@ module Machinery module Architecture
     ##
     # Compute 2x-1.
     class F2XM1 < Instruction
-      opcode  0xD9F0
+      opcode   0xD9F0
     end
 
     ##
     # Absolute value.
     class FABS < Instruction
-      opcode  0xD9E1
+      opcode   0xD9E1
     end
 
     ##
@@ -39,13 +39,13 @@ module Machinery module Architecture
     ##
     # Change sign.
     class FCHS < Instruction
-      opcode  0xD9E0
+      opcode   0xD9E0
     end
 
     ##
     # Clear exceptions.
     class FCLEX < Instruction
-      opcode  0x9BDBE2
+      opcode   0x9BDBE2
     end
 
     ##
@@ -59,19 +59,19 @@ module Machinery module Architecture
     ##
     # Compare floating-point values.
     class FCOMPP < Instruction
-      opcode  0xDED9
+      opcode   0xDED9
     end
 
     ##
     # Decrement stack-top pointer.
     class FDECSTP < Instruction
-      opcode  0xD9F6
+      opcode   0xD9F6
     end
 
     ##
     # Disable interrupts.
     class FDISI < Instruction
-      opcode  0x9BDBE1
+      opcode   0x9BDBE1
     end
 
     ##
@@ -93,7 +93,7 @@ module Machinery module Architecture
     ##
     # Enable interrupts.
     class FENI < Instruction
-      opcode  0x9BDBE0
+      opcode   0x9BDBE0
     end
 
     ##
@@ -131,13 +131,13 @@ module Machinery module Architecture
     ##
     # Increment stack-top pointer.
     class FINCSTP < Instruction
-      opcode  0xD9F7
+      opcode   0xD9F7
     end
 
     ##
     # Initialize floating-point unit.
     class FINIT < Instruction
-      opcode  0x9BDBE3
+      opcode   0x9BDBE3
     end
 
     ##
@@ -159,13 +159,13 @@ module Machinery module Architecture
     ##
     # Load floating-point value.
     class FLD < Instruction
-      opcode  0xD9E8
+      opcode   0xD9E8
     end
 
     ##
     # Load constant: ...
     class FLD1 < Instruction
-      opcode  0xD9E8
+      opcode   0xD9E8
     end
 
     ##
@@ -183,37 +183,37 @@ module Machinery module Architecture
     ##
     # Load constant: ...
     class FLDL2E < Instruction
-      opcode  0xD9EA
+      opcode   0xD9EA
     end
 
     ##
     # Load constant: ...
     class FLDL2T < Instruction
-      opcode  0xD9E9
+      opcode   0xD9E9
     end
 
     ##
     # Load constant: ...
     class FLDLG2 < Instruction
-      opcode  0xD9EC
+      opcode   0xD9EC
     end
 
     ##
     # Load constant: ...
     class FLDLN2 < Instruction
-      opcode  0xD9ED
+      opcode   0xD9ED
     end
 
     ##
     # Load constant: ...
     class FLDPI < Instruction
-      opcode  0xD9EB
+      opcode   0xD9EB
     end
 
     ##
     # Load constant: ...
     class FLDZ < Instruction
-      opcode  0xD9EE
+      opcode   0xD9EE
     end
 
     ##
@@ -227,31 +227,31 @@ module Machinery module Architecture
     ##
     # Clear exceptions.
     class FNCLEX < Instruction
-      opcode  0xDBE2
+      opcode   0xDBE2
     end
 
     ##
     # Disable interrupts (no wait).
     class FNDISI < Instruction
-      opcode  0xDBE1
+      opcode   0xDBE1
     end
 
     ##
     # Enable interrupts (no wait).
     class FNENI < Instruction
-      opcode  0xDBE0
+      opcode   0xDBE0
     end
 
     ##
     # Initialize floating-point unit.
     class FNINIT < Instruction
-      opcode  0xDBE3
+      opcode   0xDBE3
     end
 
     ##
     # No operation.
     class FNOP < Instruction
-      opcode  0xD9D0
+      opcode   0xD9D0
     end
 
     ##
@@ -281,25 +281,25 @@ module Machinery module Architecture
     ##
     # Partial arctangent.
     class FPATAN < Instruction
-      opcode  0xD9F3
+      opcode   0xD9F3
     end
 
     ##
     # Partial remainder.
     class FPREM < Instruction
-      opcode  0xD9F8
+      opcode   0xD9F8
     end
 
     ##
     # Partial tangent.
     class FPTAN < Instruction
-      opcode  0xD9F2
+      opcode   0xD9F2
     end
 
     ##
     # Round to integer.
     class FRNDINT < Instruction
-      opcode  0xD9FC
+      opcode   0xD9FC
     end
 
     ##
@@ -321,13 +321,13 @@ module Machinery module Architecture
     ##
     # Scale.
     class FSCALE < Instruction
-      opcode  0xD9FD
+      opcode   0xD9FD
     end
 
     ##
     # Square root.
     class FSQRT < Instruction
-      opcode  0xD9FA
+      opcode   0xD9FA
     end
 
     ##
@@ -373,7 +373,7 @@ module Machinery module Architecture
     ##
     # Test.
     class FTST < Instruction
-      opcode  0xD9E4
+      opcode   0xD9E4
     end
 
     ##
@@ -383,31 +383,31 @@ module Machinery module Architecture
     ##
     # ExamineModR/M.
     class FXAM < Instruction
-      opcode  0xD9E5
+      opcode   0xD9E5
     end
 
     ##
     # Exchange register contents.
     class FXCH < Instruction
-      opcode  0xD9C9
+      opcode   0xD9C9
     end
 
     ##
     # Extract exponent and significand.
     class FXTRACT < Instruction
-      opcode  0xD9F4
+      opcode   0xD9F4
     end
 
     ##
     # Compute y * log2X.
     class FYL2X < Instruction
-      opcode  0xD9F1
+      opcode   0xD9F1
     end
 
     ##
     # Compute y * log2(X+1).
     class FYL2XP1 < Instruction
-      opcode  0xD9F9
+      opcode   0xD9F9
     end
   end
 end end
