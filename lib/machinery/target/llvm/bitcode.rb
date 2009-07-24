@@ -3,6 +3,8 @@ require 'machinery/format'
 module Machinery module LLVM
   ##
   # The LLVM bitcode (.bc file) format.
+  #
+  # @see http://llvm.org/docs/BitCodeFormat.html
   class Bitcode < Machinery::Format::BinaryFormat
 
     ##
